@@ -63,7 +63,12 @@ for n in range(list_size):
 	if todo_name != NameList[n]:
 		continue
 	filename = NameList[n] + '/' + NameList[n] + '_' + PhaseList[n] +'.dat'
-	target_name = NameList[n]
+	k = 0
+	while(1):
+		if NameList[n][k] == 'N':
+			break
+		k += 1
+	target_name = NameList[n][0:(k+1)] + ' ' + NameList[n][(k+1):]
 
 	with open('/Users/pro/python/spectra_data/paper/' + filename,'r') as f:
 		line = f.readline()
@@ -129,7 +134,7 @@ for n in range(list_size):
 	length = len(xlist)
 	def fG(x, sigma, mu, A):
 		return A*np.exp(-(x-mu)**2/2/sigma**2)
-	
+	'''
 	fig, ax = plt.subplots()
 	ax.set_title('%s + %sd' %(target_name, phase))
 	ax.set_xlabel('Wavelength [Å]')
@@ -152,7 +157,7 @@ for n in range(list_size):
 	ax.text(4300,13,'[Fe III] + [Fe II]')
 
 	plt.show()
-	
+	'''
 
 	Min1 = int(Min1List[n])
 	Max1 = int(Max1List[n])
@@ -247,7 +252,7 @@ for n in range(list_size):
 
 		params,params_covariance=optimize.curve_fit(fGs,fit_xlist,fit_ylist,guess,maxfev=500000,bounds=bound)
 
-		chi2 = np.sum((fGs(fit_xlist,params[0],params[1],params[2],params[3],params[4],params[5]) - chi_ylist)**2)/np.size(fit_xlist)
+		chi2 = np.sum((fGs(fit_xlist,params[0],params[1],params[2],params[3],params[4],params[5]) - fit_ylist)**2)/np.size(fit_xlist)
 
 		print('chi2: %f' %chi2)
 
@@ -349,24 +354,23 @@ for n in range(list_size):
 
 		plt.title('%s  +%sd' %(target_name, phase))
 		plt.xlabel('Rest Wavelength [Å]')
-		plt.ylabel('Normalized flux')
-		plt.yticks([])
+		plt.ylabel('Scaled Flux')
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
-		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="best fit\n $\\chi^2 =$ %f"%chi2)
-		plt.plot(cut_xlist, ysimu+y7, color="red",  label="best fit")
+		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\bar{\\chi^2} =$ %f"%chi2)
+		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
 		plt.plot(cut_xlist, y1+y7, color="purple", label="[Fe II]",linestyle='--')
 		plt.plot(cut_xlist, y2+y7, color="purple",linestyle='--')
 		plt.plot(cut_xlist, y3+y7, color="purple",linestyle='--')
 		plt.plot(cut_xlist, y4+y7, color="purple",linestyle='--')
 		plt.plot(cut_xlist, y5+y7, color="green", label="[Ni II]",linestyle='--')
 		plt.plot(cut_xlist, y6+y7, color="green",linestyle='--')
-		plt.plot(cut_xlist[0:(pos[1] - pos[0]+1)], np.ones(pos[1]-pos[0]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'y', label = 'fit region')
-		plt.plot(cut_xlist[(pos[2] - pos[0]):(pos[3] - pos[0]+1)], np.ones(pos[3]-pos[2]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'y')
-		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'y')
-		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'y')
-		plt.plot(cut_xlist, y7, color="blue",   label="continuum")
-		plt.legend(loc='upper left')
+		plt.plot(cut_xlist[0:(pos[1] - pos[0]+1)], np.ones(pos[1]-pos[0]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b', label = 'fit region')
+		plt.plot(cut_xlist[(pos[2] - pos[0]):(pos[3] - pos[0]+1)], np.ones(pos[3]-pos[2]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
+		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
+		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
+		plt.plot(cut_xlist, y7, color="y",   label="continuum")
+		plt.legend(loc='upper right')
 		plt.show()
 		'''
 		plt.savefig('./appendix/'+FigureName)

@@ -1,0 +1,10 @@
+*~
+[#]*[#]
+.\#*
+*.aux
+*.log
+*.pyc
+doc/.ipynb_checkpoints/
+jobs/
+output/
+.nfs*
