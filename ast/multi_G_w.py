@@ -357,7 +357,7 @@ for n in range(list_size):
 		plt.ylabel('Scaled Flux')
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
-		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\bar{\\chi^2} =$ %f"%chi2)
+		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
 		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
 		plt.plot(cut_xlist, y1+y7, color="purple", label="[Fe II]",linestyle='--')
 		plt.plot(cut_xlist, y2+y7, color="purple",linestyle='--')
