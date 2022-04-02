@@ -14,6 +14,18 @@ def Append(l1, l2):
 		l3.append(item)
 	return np.array(l3)
 
+def Cut(xlist, min, max):
+	pos = [0,0]
+	index = 0
+	for i in range(len(xlist)):
+		if xlist[i] >= min and index == 0:
+			pos[0] = i
+			index = 1
+		if xlist[i] >= max and index ==1:
+			pos[1] = i
+			break
+	return pos
+
 #template
 with open('/Users/pro/python/spectra_data/paper/SN1999by/SN1999by.dat','r') as f:
 	line = f.readline()
@@ -40,7 +52,14 @@ ylist_template = np.array(ylist_template)*np.power(10,fitzpatrick99(xlist_templa
 plt.plot(xlist_template,ylist_template)
 plt.show()
 
+pos_temp1 = Cut(xlist_template, 5700, 6100)
+pos_temp2 = Cut(xlist_template, 6065, 6335)
 
+
+xlist_template1 = xlist_template[pos_temp1[0]: pos_temp1[1]]
+ylist_template1 = ylist_template[pos_temp1[0]: pos_temp1[1]]
+xlist_template2 = xlist_template[pos_temp2[0]: pos_temp2[1]]
+ylist_template2 = ylist_template[pos_temp2[0]: pos_temp2[1]]
 
 '''
 open file
@@ -124,23 +143,11 @@ while(1):
 	ylist = ylist*np.power(10,fitzpatrick99(xlist,R_V*E_B_V,R_V)/2.5)
 	ylist = ylist / np.max(ylist)
 
-	
-
-	
-
 	while(1):
-		pos = [0,0]
 		Min1 = int(input('input the minimum1:'))
 		Max1 = int(input('input the maximum1:'))
 		width = int(input('width: '))
-		indicator = 0
-		for i in range(length):
-			if int(xlist[i]) >= Min1 and indicator == 0:
-				pos[0] = i
-				indicator = 1
-			elif int(xlist[i]) >= Max1 and indicator == 1:
-				pos[1] = i
-				break
+		pos = Cut(xlist, Min1, Max1)
 
 		print(xlist[pos[0]], xlist[pos[1]])
 		cut_xlist = xlist[pos[0]:(pos[1]+1)]
@@ -154,31 +161,36 @@ while(1):
 		fit_xlist = np.array(cut_xlist)
 		fit_ylist = np.array(cut_ylist)
 
-		pos = [0,0]
-		indicator = 0
-		for i in range(np.size(xlist_template)):
-			if int(xlist_template[i]) >= Min1 and indicator == 0:
-				pos[0] = i
-				indicator = 1
-			elif int(xlist_template[i]) >= Max1 and indicator == 1:
-				pos[1] = i
-				break
-		xlist_template_cut = xlist_template[pos[0]:(pos[1]+1)]
-		ylist_template_cut = ylist_template[pos[0]:(pos[1]+1)]
 		
-		xlist_template_v = (xlist_template_cut - 5891)/5891*300000
-		fit_xlist_v  = (fit_xlist - 5891)/5891*300000
+		
+		xlist_template1_v = (xlist_template1 - 5905)/5905*300000
+		xlist_template2_v = (xlist_template2 - 6200)/6200*300000
+		
 
-		def log_likelihood(theta, xlist_template_v, ylist_template, fit_xlist_v, fit_ylist):
+		def log_likelihood(theta, xlist_template1_v, ylist_template1, xlist_template2_v, ylist_template2, fit_xlist, fit_ylist):
 			v1, v2, w1, w2, r, A = theta
-			p1 = (1-((xlist_template_v-v1)/w1)**2)>0
-			P1 = (1-((xlist_template_v-v1)/w1)**2)*p1
-			p2 = (1-((xlist_template_v-v2)/w2)**2)>0
-			P2 = (1-((xlist_template_v-v2)/w2)**2)*p2
+			p1 = (1-((xlist_template1_v-v1)/w1)**2)>0
+			P1 = (1-((xlist_template1_v-v1)/w1)**2)*p1
+			p2 = (1-((xlist_template1_v-v2)/w2)**2)>0
+			P2 = (1-((xlist_template1_v-v2)/w2)**2)*p2
 			kernel = P1 + r*P2
-			conv_result = signal.convolve(ylist_template_cut,kernel,mode='same')*A
-			tck = interpolate.splrep(xlist_template_v,conv_result,s=0)
-			conv_result = interpolate.splev(fit_xlist_v,tck,der=0)
+			conv_result1 = signal.convolve(ylist_template1,kernel,mode='same')*A
+
+			p1 = (1-((xlist_template2_v-v1)/w1)**2)>0
+			P1 = (1-((xlist_template2_v-v1)/w1)**2)*p1
+			p2 = (1-((xlist_template2_v-v2)/w2)**2)>0
+			P2 = (1-((xlist_template2_v-v2)/w2)**2)*p2
+			kernel = P1 + r*P2
+			conv_result2 = signal.convolve(ylist_template2,kernel,mode='same')*A
+			
+			for i in range(pos_temp2[0]-pos_temp1[0], pos_temp1[1]-pos_temp1[0]+1):
+				conv_result1[i] += conv_result2[i-(pos_temp2[0]-pos_temp1[0])]
+			combine_conv_result = Append(conv_result1, conv_result2[(pos_temp1[1]-pos_temp2[0]+1):])
+			xlist_template1 = xlist_template1_v*5905/300000+5905
+			xlist_template2 = xlist_template2_v*6200/300000+6200
+			combine_xlist_template = Append(xlist_template1, xlist_template2[(pos_temp1[1]-pos_temp2[0]+1):])
+			tck = interpolate.splrep(combine_xlist_template, combine_conv_result, s=0)
+			conv_result = interpolate.splev(fit_xlist,tck,der=0)
 			return -0.5*np.sum((fit_ylist - conv_result)**2)
 
 		'''
@@ -215,26 +227,43 @@ while(1):
 		r = 0.636
 		A = 0.027
 		
-		p1 = (1-((xlist_template_v-v1)/w1)**2)>0
-		P1 = (1-((xlist_template_v-v1)/w1)**2)*p1
-		p2 = (1-((xlist_template_v-v2)/w2)**2)>0
-		P2 = (1-((xlist_template_v-v2)/w2)**2)*p2
+		p1 = (1-((xlist_template1_v-v1)/w1)**2)>0
+		P1 = (1-((xlist_template1_v-v1)/w1)**2)*p1
+		p2 = (1-((xlist_template1_v-v2)/w2)**2)>0
+		P2 = (1-((xlist_template1_v-v2)/w2)**2)*p2
 		kernel = P1 + r*P2
-		conv_result = signal.convolve(ylist_template_cut,kernel,mode='same')*A
-		tck = interpolate.splrep(xlist_template_v,conv_result,s=0)
-		conv_result1 = interpolate.splev(fit_xlist_v,tck,der=0)
-		print(-0.5*np.sum((fit_ylist - conv_result1)**2))
+		conv_result1 = signal.convolve(ylist_template1,kernel,mode='same')*A
 
-		fig, axs = plt.subplots(3,2)
-		axs[0,0].plot(xlist_template_cut,ylist_template_cut)
-		axs[0,1].plot(xlist_template_cut,conv_result,c='b')
-		axs[0,1].plot(fit_xlist,conv_result1,c='r')
-		axs[1,0].plot(xlist_template_v,P1*A)
-		axs[1,1].plot(xlist_template_v,r*P2*A)
-		axs[2,0].plot(xlist_template_v,kernel*A)
-		axs[2,1].plot(fit_xlist, fit_ylist, c = 'b', label = 'data')
-		axs[2,1].plot(fit_xlist, conv_result1, c = 'r', label = 'conv_fit')
-		axs[2,1].legend()
+		p1 = (1-((xlist_template2_v-v1)/w1)**2)>0
+		P1 = (1-((xlist_template2_v-v1)/w1)**2)*p1
+		p2 = (1-((xlist_template2_v-v2)/w2)**2)>0
+		P2 = (1-((xlist_template2_v-v2)/w2)**2)*p2
+		kernel = P1 + r*P2
+		conv_result2 = signal.convolve(ylist_template2,kernel,mode='same')*A
+		
+		print(pos_temp1)
+		print(pos_temp2)
+
+		for i in range(pos_temp2[0]-pos_temp1[0], pos_temp1[1]-pos_temp1[0]):
+			conv_result1[i] += conv_result2[i-(pos_temp2[0]-pos_temp1[0])]
+		combine_conv_result = Append(conv_result1, conv_result2[(pos_temp1[1]-pos_temp2[0]+1):])
+		xlist_template1 = xlist_template1_v*5905/300000+5905
+		xlist_template2 = xlist_template2_v*6200/300000+6200
+		combine_xlist_template = Append(xlist_template1, xlist_template2[(pos_temp1[1]-pos_temp2[0]+1):])
+		tck = interpolate.splrep(combine_xlist_template, combine_conv_result, s=0)
+		conv_result = interpolate.splev(fit_xlist,tck,der=0)
+
+		fig, axs = plt.subplots(4,2)
+		axs[0,0].plot(xlist_template1,ylist_template1)
+		axs[0,1].plot(xlist_template2,ylist_template2)
+		axs[1,0].plot(xlist_template1,conv_result1)
+		axs[1,1].plot(xlist_template2,conv_result2)
+		axs[2,0].plot(xlist_template2_v,P1*A)
+		axs[2,1].plot(xlist_template2_v,r*P2*A)
+		axs[3,0].plot(xlist_template2_v,kernel*A)
+		axs[3,1].plot(fit_xlist, fit_ylist, c = 'b', label = 'data')
+		axs[3,1].plot(fit_xlist, conv_result, c = 'r', label = 'conv_fit')
+		axs[3,1].legend()
 		plt.show()
 		again = int(input('again?: '))
 		if again != 1:
