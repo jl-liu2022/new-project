@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.optimize as optimize
 import scipy.integrate as itg
 import scipy.signal as signal
+import emcee
 from scipy import interpolate
 from extinction import fitzpatrick99 
 
@@ -68,7 +69,6 @@ xlist_template1 = xlist_template[pos_temp1[0]: pos_temp1[1]]
 ylist_template1 = ylist_template[pos_temp1[0]: pos_temp1[1]]
 xlist_template2 = xlist_template[pos_temp2[0]: pos_temp2[1]]
 ylist_template2 = ylist_template[pos_temp2[0]: pos_temp2[1]]
-
 '''
 open file
 '''
@@ -149,7 +149,6 @@ while(1):
 
 	xlist = xlist / (1+redshift)
 	ylist = ylist*np.power(10,fitzpatrick99(xlist,R_V*E_B_V,R_V)/2.5)
-	ylist = ylist / np.max(ylist)
 
 	while(1):
 		Min1 = int(input('input the minimum1:'))
@@ -167,7 +166,7 @@ while(1):
 		print(len(cut_ylist))
 		
 		fit_xlist = np.array(cut_xlist)
-		fit_ylist = np.array(cut_ylist)
+		fit_ylist = np.array(cut_ylist)/np.max(cut_ylist)
 		
 		def log_likelihood(theta, xlist_template1, ylist_template1, fit_xlist, fit_ylist):
 			v1, v2, w1, w2, r, A = theta
@@ -178,34 +177,83 @@ while(1):
 			P2 = (1-((xlist_template1_v-v2)/w2)**2)*p2
 			kernel = P1 + r*P2
 
-			conv_result1 = signal.convolve(ylist_template1,kernel,mode='same')*A
+			conv_result1 = signal.convolve(ylist_template1,kernel,mode='same')
+			conv_result1 = conv_result1/np.max(conv_result1)*np.max(fit_ylist)*A
 			tck = interpolate.splrep(xlist_template1, conv_result1, s=0)
 			conv_result = interpolate.splev(fit_xlist,tck,der=0)
-			return np.sum((fit_ylist - conv_result)**2)
+			return -0.5*np.sum((fit_ylist - conv_result)**2)
 
-		
+		def log_prior(theta):
+			v1, v2, w1, w2, r, A = theta
+			if -10000.0 < v1 < 10000.0 and -10000.0 < v2 < 10000.0 and 0.0 < w1 < 10000.0 and 0.0 < w2 < 10000.0 and 0.0 < r < 3.0 and 0.5 < A < 2.0:
+				return 0.0
+			return -np.inf
 
+		def log_probability(theta, xlist_template1, ylist_template1, fit_xlist, fit_ylist):
+			lp = log_prior(theta)
+			if not np.isfinite(lp):
+				return -np.inf
+			return lp + log_likelihood(theta, xlist_template1, ylist_template1, fit_xlist, fit_ylist)
 
 		#vshift = -2996
 		#vsep = 6460
 		#w1 = 1211
 		#w2 = 5116
-		vshift = -3500
+		vshift = -2000
 		vsep = 6000
 		v1 = vshift - 0.5*vsep
 		v2 = vshift + 0.5*vsep
 		w1 = 2000
 		w2 = 4000
-		r = 0.636
-		A = 0.027
+		r = 0.7
+		A = 1.0
 		
 		guess = [v1,v2,w1,w2,r,A]
 		bounds = [(-10000,10000),(-10000,10000),(0,20000),(0,20000),(0,np.inf),(0,np.inf)]
-		#nll = lambda *args: -log_likelihood(*args)
+		nll = lambda *args: -log_likelihood(*args)
 
-		res = optimize.minimize(log_likelihood, guess, args=(xlist_template1, ylist_template1, fit_xlist, fit_ylist), bounds=bounds)
+		res = optimize.minimize(nll, guess, args=(xlist_template1, ylist_template1, fit_xlist, fit_ylist), bounds=bounds)
 
-		theta = res.x
+		rand_start = np.ones([32,6])
+		for i in range(32):
+			rand_start[i][0] = np.random.randn()*100
+			rand_start[i][1] = np.random.randn()*100
+			rand_start[i][2] = np.random.randn()*100
+			rand_start[i][3] = np.random.randn()*100
+			rand_start[i][4] = np.random.randn()*0.01
+			rand_start[i][5] = np.random.randn()*0.01
+		start = res.x + rand_start
+		nwalkers, ndim = start.shape
+
+		sampler = emcee.EnsembleSampler(
+			nwalkers, ndim, log_probability, args=(xlist_template1, ylist_template1, fit_xlist, fit_ylist)
+		)
+		sampler.run_mcmc(start, 20000, progress=True)
+
+		fig, axes = plt.subplots(6, figsize=(10, 7), sharex=True)
+		samples = sampler.get_chain()
+		labels = ["v1", "v2", "w1","w2", "r", "A"]
+		for i in range(ndim):
+		    ax = axes[i]
+		    ax.plot(samples[:, :, i], "k", alpha=0.3)
+		    ax.set_xlim(0, len(samples))
+		    ax.set_ylabel(labels[i])
+		    ax.yaxis.set_label_coords(-0.1, 0.5)
+
+		axes[-1].set_xlabel("step number")
+		plt.show()
+
+		tau = sampler.get_autocorr_time()
+		print(tau)
+
+		flat_samples = sampler.get_chain(discard=int(2.5*np.max(tau)), thin=int(np.max(tau)/2), flat=True)
+		print(flat_samples.shape)
+
+		theta = []
+		for i in range(ndim):
+			mcmc = np.percentile(flat_samples[:,i],[16,50,84])
+			theta.append(mcmc[1])
+
 		v1, v2, w1, w2, r, A = theta
 		print(theta)
 		 
@@ -217,13 +265,14 @@ while(1):
 		P2 = (1-((xlist_template1_v-v2)/w2)**2)*p2
 		kernel = P1 + r*P2
 
-		conv_result1 = signal.convolve(ylist_template1,kernel,mode='same')*A
+		conv_result1 = signal.convolve(ylist_template1,kernel,mode='same')
+		conv_result1 = conv_result1/np.max(conv_result1)*np.max(fit_ylist)*A
 		tck = interpolate.splrep(xlist_template1, conv_result1, s=0)
 		conv_result = interpolate.splev(fit_xlist,tck,der=0)
 
 		pos_data = Cut(xlist, 5700, 6100)
 		xlist_data = xlist[pos_data[0]:pos_data[1]]
-		ylist_data = ylist[pos_data[0]:pos_data[1]]
+		ylist_data = ylist[pos_data[0]:pos_data[1]]/np.max(cut_ylist)
 
 		fig, axs = plt.subplots(2,1)
 		axs[0].set_xlabel('Wavelength [$\\rm \\AA$]')
@@ -241,6 +290,7 @@ while(1):
 		axins.plot(xlist_template1_v,kernel*A)
 
 		plt.show()
+
 		again = int(input('again?: '))
 		if again != 1:
 			break
