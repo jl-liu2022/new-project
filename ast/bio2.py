@@ -26,6 +26,14 @@ def Cut(xlist, min, max):
 			break
 	return pos
 
+def w_to_v_rela(wavelength, center):
+	velocity = (wavelength**2 - center**2)/(wavelength**2 + center**2)*300000
+	return velocity
+
+def w_to_v_norm(wavelength, center):
+	velocity = (wavelength - center)/center*300000
+	return velocity
+
 #template
 with open('/Users/pro/python/spectra_data/paper/SN1999by/SN1999by.dat','r') as f:
 	line = f.readline()
@@ -160,110 +168,78 @@ while(1):
 		
 		fit_xlist = np.array(cut_xlist)
 		fit_ylist = np.array(cut_ylist)
-
 		
-		
-		xlist_template1_v = (xlist_template1 - 5905)/5905*300000
-		xlist_template2_v = (xlist_template2 - 6200)/6200*300000
-		
-
-		def log_likelihood(theta, xlist_template1_v, ylist_template1, xlist_template2_v, ylist_template2, fit_xlist, fit_ylist):
+		def log_likelihood(theta, xlist_template1, ylist_template1, fit_xlist, fit_ylist):
 			v1, v2, w1, w2, r, A = theta
+			xlist_template1_v = w_to_v_norm(xlist_template1, 5900)
 			p1 = (1-((xlist_template1_v-v1)/w1)**2)>0
 			P1 = (1-((xlist_template1_v-v1)/w1)**2)*p1
 			p2 = (1-((xlist_template1_v-v2)/w2)**2)>0
 			P2 = (1-((xlist_template1_v-v2)/w2)**2)*p2
 			kernel = P1 + r*P2
+
 			conv_result1 = signal.convolve(ylist_template1,kernel,mode='same')*A
-
-			p1 = (1-((xlist_template2_v-v1)/w1)**2)>0
-			P1 = (1-((xlist_template2_v-v1)/w1)**2)*p1
-			p2 = (1-((xlist_template2_v-v2)/w2)**2)>0
-			P2 = (1-((xlist_template2_v-v2)/w2)**2)*p2
-			kernel = P1 + r*P2
-			conv_result2 = signal.convolve(ylist_template2,kernel,mode='same')*A
-			
-			for i in range(pos_temp2[0]-pos_temp1[0], pos_temp1[1]-pos_temp1[0]+1):
-				conv_result1[i] += conv_result2[i-(pos_temp2[0]-pos_temp1[0])]
-			combine_conv_result = Append(conv_result1, conv_result2[(pos_temp1[1]-pos_temp2[0]+1):])
-			xlist_template1 = xlist_template1_v*5905/300000+5905
-			xlist_template2 = xlist_template2_v*6200/300000+6200
-			combine_xlist_template = Append(xlist_template1, xlist_template2[(pos_temp1[1]-pos_temp2[0]+1):])
-			tck = interpolate.splrep(combine_xlist_template, combine_conv_result, s=0)
+			tck = interpolate.splrep(xlist_template1, conv_result1, s=0)
 			conv_result = interpolate.splev(fit_xlist,tck,der=0)
-			return -0.5*np.sum((fit_ylist - conv_result)**2)
+			return np.sum((fit_ylist - conv_result)**2)
 
-		'''
-		vshift = -2996
-		vsep = 6460
+		
+
+
+		#vshift = -2996
+		#vsep = 6460
+		#w1 = 1211
+		#w2 = 5116
+		vshift = -3500
+		vsep = 6000
 		v1 = vshift - 0.5*vsep
 		v2 = vshift + 0.5*vsep
-		v1 = 5890*(1+v1/300000)
-		v2 = 5890*(1+v2/300000)
-		w1 = 5890*1211/300000
-		w2 = 5890*5116/300000
+		w1 = 2000
+		w2 = 4000
 		r = 0.636
-		A = 0.1
-		v1 = 5800
-		v2 = 6000
+		A = 0.027
+		
 		guess = [v1,v2,w1,w2,r,A]
-		bounds = [(5700,6100),(5700,6100),(0,400),(0,400),(0,np.inf),(0,np.inf)]
-		nll = lambda *args: -log_likelihood(*args)
-		''
-		res = optimize.minimize(nll, guess, args=(xlist_template, ylist_template, fit_xlist, fit_ylist), bounds=bounds)
+		bounds = [(-10000,10000),(-10000,10000),(0,20000),(0,20000),(0,np.inf),(0,np.inf)]
+		#nll = lambda *args: -log_likelihood(*args)
+
+		res = optimize.minimize(log_likelihood, guess, args=(xlist_template1, ylist_template1, fit_xlist, fit_ylist), bounds=bounds)
 
 		theta = res.x
 		v1, v2, w1, w2, r, A = theta
 		print(theta)
-		'''
+		 
 
-
-		vshift = -2996
-		vsep = 6460
-		v1 = vshift - 0.5*vsep
-		v2 = vshift + 0.5*vsep
-		w1 = 1211
-		w2 = 5116
-		r = 0.636
-		A = 0.027
-		
+		xlist_template1_v = w_to_v_norm(xlist_template1, 5900)
 		p1 = (1-((xlist_template1_v-v1)/w1)**2)>0
 		P1 = (1-((xlist_template1_v-v1)/w1)**2)*p1
 		p2 = (1-((xlist_template1_v-v2)/w2)**2)>0
 		P2 = (1-((xlist_template1_v-v2)/w2)**2)*p2
 		kernel = P1 + r*P2
+
 		conv_result1 = signal.convolve(ylist_template1,kernel,mode='same')*A
-
-		p1 = (1-((xlist_template2_v-v1)/w1)**2)>0
-		P1 = (1-((xlist_template2_v-v1)/w1)**2)*p1
-		p2 = (1-((xlist_template2_v-v2)/w2)**2)>0
-		P2 = (1-((xlist_template2_v-v2)/w2)**2)*p2
-		kernel = P1 + r*P2
-		conv_result2 = signal.convolve(ylist_template2,kernel,mode='same')*A
-		
-		print(pos_temp1)
-		print(pos_temp2)
-
-		for i in range(pos_temp2[0]-pos_temp1[0], pos_temp1[1]-pos_temp1[0]):
-			conv_result1[i] += conv_result2[i-(pos_temp2[0]-pos_temp1[0])]
-		combine_conv_result = Append(conv_result1, conv_result2[(pos_temp1[1]-pos_temp2[0]+1):])
-		xlist_template1 = xlist_template1_v*5905/300000+5905
-		xlist_template2 = xlist_template2_v*6200/300000+6200
-		combine_xlist_template = Append(xlist_template1, xlist_template2[(pos_temp1[1]-pos_temp2[0]+1):])
-		tck = interpolate.splrep(combine_xlist_template, combine_conv_result, s=0)
+		tck = interpolate.splrep(xlist_template1, conv_result1, s=0)
 		conv_result = interpolate.splev(fit_xlist,tck,der=0)
 
-		fig, axs = plt.subplots(4,2)
-		axs[0,0].plot(xlist_template1,ylist_template1)
-		axs[0,1].plot(xlist_template2,ylist_template2)
-		axs[1,0].plot(xlist_template1,conv_result1)
-		axs[1,1].plot(xlist_template2,conv_result2)
-		axs[2,0].plot(xlist_template2_v,P1*A)
-		axs[2,1].plot(xlist_template2_v,r*P2*A)
-		axs[3,0].plot(xlist_template2_v,kernel*A)
-		axs[3,1].plot(fit_xlist, fit_ylist, c = 'b', label = 'data')
-		axs[3,1].plot(fit_xlist, conv_result, c = 'r', label = 'conv_fit')
-		axs[3,1].legend()
+		pos_data = Cut(xlist, 5700, 6100)
+		xlist_data = xlist[pos_data[0]:pos_data[1]]
+		ylist_data = ylist[pos_data[0]:pos_data[1]]
+
+		fig, axs = plt.subplots(2,1)
+		axs[0].set_xlabel('Wavelength [$\\rm \\AA$]')
+		axs[0].set_ylabel('Scaled Flux')
+		axs[0].plot(xlist_template1,ylist_template1)
+		axs[1].set_xlabel('wavelength [$\\rm \\AA$]')
+		axs[1].set_ylabel('Scaled Flux')
+		axs[1].plot(xlist_data, ylist_data, c = 'gray', label = 'data')
+		axs[1].plot(xlist_template1,conv_result1, c = 'b', label = 'conv_result')
+		axs[1].plot(fit_xlist, conv_result, c = 'r', label = 'fit region')
+		axs[1].legend(loc = 'upper left')
+		axins = axs[1].inset_axes([0.75,0.75,0.24,0.24])
+		axins.set_yticklabels([])
+		axins.set_xlabel('Velocity [km s$^{-1}$]')
+		axins.plot(xlist_template1_v,kernel*A)
+
 		plt.show()
 		again = int(input('again?: '))
 		if again != 1:
