@@ -167,7 +167,7 @@ while(1):
 		
 		fit_xlist = np.array(cut_xlist)
 		fit_ylist = np.array(cut_ylist)/np.max(cut_ylist)
-		
+		#SN2003gs/SN2003gs_207.dat
 		def log_likelihood(theta, xlist_template1, ylist_template1, fit_xlist, fit_ylist):
 			v1, v2, w1, w2, r, A = theta
 			xlist_template1_v = w_to_v_norm(xlist_template1, 5900)
@@ -178,14 +178,16 @@ while(1):
 			kernel = P1 + r*P2
 
 			conv_result1 = signal.convolve(ylist_template1,kernel,mode='same')
-			conv_result1 = conv_result1/np.max(conv_result1)*np.max(fit_ylist)*A
+			max_conv = np.max(conv_result1)
+			if max_conv:
+				conv_result1 = conv_result1/max_conv*A
 			tck = interpolate.splrep(xlist_template1, conv_result1, s=0)
 			conv_result = interpolate.splev(fit_xlist,tck,der=0)
 			return -0.5*np.sum((fit_ylist - conv_result)**2)
 
 		def log_prior(theta):
 			v1, v2, w1, w2, r, A = theta
-			if -10000.0 < v1 < 10000.0 and -10000.0 < v2 < 10000.0 and 0.0 < w1 < 10000.0 and 0.0 < w2 < 10000.0 and 0.0 < r < 3.0 and 0.5 < A < 2.0:
+			if -10000.0 < v1 < 10000.0 and -10000.0 < v2 < 10000.0 and 1.0 < w1 < 10000.0 and 1.0 < w2 < 10000.0 and 0.0 < r < 3.0 and 0.5 < A < 2.0:
 				return 0.0
 			return -np.inf
 
