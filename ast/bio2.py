@@ -230,7 +230,7 @@ while(1):
 		sampler = emcee.EnsembleSampler(
 			nwalkers, ndim, log_probability, args=(xlist_template1, ylist_template1, fit_xlist, fit_ylist)
 		)
-		sampler.run_mcmc(start, 20000, progress=True)
+		sampler.run_mcmc(start, 50000, progress=True)
 
 		fig, axes = plt.subplots(6, figsize=(10, 7), sharex=True)
 		samples = sampler.get_chain()
@@ -250,12 +250,14 @@ while(1):
 
 		flat_samples = sampler.get_chain(discard=int(2.5*np.max(tau)), thin=int(np.max(tau)/2), flat=True)
 		print(flat_samples.shape)
-
-		theta = []
-		for i in range(ndim):
-			mcmc = np.percentile(flat_samples[:,i],[16,50,84])
-			theta.append(mcmc[1])
-
+		log_likelihood_value = []
+		for i in range(flat_samples.shape[0]):
+			log_likelihood_value.append(log_likelihood(flat_samples[i], xlist_template1, ylist_template1, fit_xlist, fit_ylist))
+		max_log_likelihood = np.max(log_likelihood_value)
+		for i in range(flat_samples.shape[0]):
+			if log_likelihood_value[i] == max_log_likelihood:
+				pos_max = i
+		theta = flat_samples[pos_max]
 		v1, v2, w1, w2, r, A = theta
 		print(theta)
 		 
