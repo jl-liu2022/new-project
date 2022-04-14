@@ -83,9 +83,9 @@ for i in range(number):
 
 Neb_v = (np.array(vFe)+np.array(vNi))/2
 U_Neb_v = np.sqrt(np.array(UvFe)**2+np.array(UvNi)**2)/2
-with open('/Users/pro/python/ast/table'+save_as+'.dat','w') as fw:
+with open('table'+save_as+'.dat','w') as fw:
 	for i in range(number):
-		fw.writelines('%s & %d & %d$\\pm$%d & %d$\\pm$%d & %d$\\pm$%d & %d$\\pm$%d & %.3f$\\pm$%.3f & %d$\\pm$%d & %.3f$\\pm$%.3f & %s \\\\ \n' %(name[i],phase[i],vFe[i],UvFe[i],vNi[i],UvNi[i],wFe[i],UwFe[i],wNi[i],UwNi[i],r_flux[i],U_r_flux[i],Neb_v[i],U_Neb_v[i],ratio[i],U_ratio[i],ref_spectra[i]))
+		fw.writelines('%s & +%d & %d$\\pm$%d & %d$\\pm$%d & %d$\\pm$%d & %d$\\pm$%d & %.3f$\\pm$%.3f & %d$\\pm$%d & %.3f$\\pm$%.3f & %s \\\\ \n' %(name[i],phase[i],vFe[i],UvFe[i],vNi[i],UvNi[i],wFe[i],UwFe[i],wNi[i],UwNi[i],r_flux[i],U_r_flux[i],Neb_v[i],U_Neb_v[i],ratio[i],U_ratio[i],ref_spectra[i]))
 
 ref_Si = []
 ref_LC = []

@@ -281,9 +281,10 @@ for i in range(number1):
 	spectra_x.append(xlist[pos[0]:(pos[1]+1)])
 	spectra_y.append(ylist[pos[0]:(pos[1]+1)]+0.01*qlist[i])
 
-plt.xlabel('Rest Wavelength [Å]')
-plt.ylabel('Normalized Flux')
-#plt.yticks([])
+fig, ax = plt.subplots()
+ax.set_xlabel('Wavelength [Å]')
+ax.set_ylabel('Scaled Flux + constant')
+ax.set_yticks([])
 i = 0
 while(i < number1):
 	if name1[i] == 'SN2011fe':
@@ -320,13 +321,16 @@ while(i < number1):
 			plt.text(spectra_x[n][size_x-1]+50, spectra_y[n][size_x-1]+0.02, name1[n] + ', +%s d' %phase1[n])
 		i += n-i
 	i += 1
+
 plt.plot(9000,0.1,alpha=0)
+collection = collections.BrokenBarHCollection.span_where(np.linspace(6800,7000,100),ymin=0,ymax=0.36,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
+ax.add_collection(collection)
 plt.show()
 
 cm = plt.cm.get_cmap('viridis')
 for i in range(13):
 	plt.xlabel('Rest Wavelength [Å]')
-	plt.ylabel('Normalized Flux')
+	plt.ylabel('Scaled Flux + constant')
 	plt.yticks([])
 	plt.scatter(spectra_x[plist[i*4+2]], spectra_y[plist[i*4+2]], c=delta1[plist[i*4+2]]*np.ones(np.size(spectra_x[plist[i*4+2]])), vmin = 0.8, vmax = 1.5, cmap = cm, s=1)
 	size_x = np.size(spectra_x[plist[i*4+2]])
@@ -339,7 +343,7 @@ ylist = ylist*np.max(signal.savgol_filter(ylist[pos[0]:(pos[1]+1)],51,1))/np.max
 for j in range(4):
 	for i in range(13*j, 13*(j+1)):
 		plt.xlabel('Rest Wavelength [Å]')
-		plt.ylabel('Normalized Flux')
+		plt.ylabel('Scaled Flux + constant')
 		plt.yticks([])
 		plt.scatter(spectra_x[plist[i]], spectra_y[plist[i]]+0.01*3*i, c=delta1[plist[i]]*np.ones(np.size(spectra_x[plist[i]])), vmin = 0.8, vmax = 1.5, cmap = cm, s=1)
 		size_x = np.size(spectra_x[plist[i]])
@@ -395,6 +399,28 @@ for i in range(1,number1+1):
 		color = (np.random.rand(),np.random.rand(),np.random.rand())
 		plt.errorbar(phase1[head:i],vNi1[head:i],yerr = UvNi1[head:i],label = '%s'%name1[head], c=color, capsize = 3, linestyle = '-', marker = marker[n])
 		line_t, = plt.plot(phase1[head:i],vNi1[head:i],label = '%s'%name1[head], c=color, linestyle = '-', marker = marker[n])
+		line.append(line_t)
+		head = i
+		n += 1
+l1 = plt.legend(handles=line[0:int(n/2)], loc = 'upper left')
+plt.legend(handles=line[int(n/2):], loc = 'upper right')
+plt.gca().add_artist(l1)
+plt.show()
+
+vNebular1 = (np.array(vNi1)+np.array(vFe1))/2
+UvNebular1 = np.sqrt(np.array(UvNi1)**2+np.array(UvFe1)**2)/2
+np.random.seed(399991)
+plt.xlabel('Phase (days since maximum light)')
+plt.ylabel('Nebular velocity[km/s]')
+plt.plot(np.linspace(150,450,100),np.zeros(100),linestyle='--',c = 'black')
+line = []
+head = 0
+n = 0
+for i in range(1,number1+1):
+	if name1[head] != name1[i]:
+		color = (np.random.rand(),np.random.rand(),np.random.rand())
+		plt.errorbar(phase1[head:i],vNebular1[head:i],yerr = UvNebular1[head:i],label = '%s'%name1[head], c=color, capsize = 3, linestyle = '-', marker = marker[n])
+		line_t, = plt.plot(phase1[head:i],vNebular1[head:i],label = '%s'%name1[head], c=color, linestyle = '-', marker = marker[n])
 		line.append(line_t)
 		head = i
 		n += 1
@@ -532,6 +558,21 @@ for i in range(np.size(jlist)):
 print('blue: %d' %np.size(b_vSi))
 print('red: %d' %np.size(r_vSi))
 print('gray: %d' %np.size(g_vSi))
+
+no_C = 0
+no_subC = 0
+no_critical = 0
+for i in range(np.size(jlist)):
+	if ratio1[jlist[i]] < 0.06:
+		no_subC += 1
+	elif ratio1[jlist[i]] > 0.064:
+		no_C += 1
+	else:
+		no_critical += 1
+
+print('C: %d' %no_C)
+print('subC: %d' %no_subC)
+print('critical: %d' %no_critical)
 
 def f_line(x,a,b):
 	return a*x + b
