@@ -4,6 +4,7 @@ import scipy.optimize as optimize
 import scipy.integrate as itg
 import scipy.signal as signal
 import emcee
+import time
 from scipy import interpolate
 from extinction import fitzpatrick99 
 
@@ -151,20 +152,28 @@ while(1):
 	ylist = ylist*np.power(10,fitzpatrick99(xlist,R_V*E_B_V,R_V)/2.5)
 
 	while(1):
-		Min1 = int(input('input the minimum1:'))
-		Max1 = int(input('input the maximum1:'))
-		width = int(input('width: '))
-		pos = Cut(xlist, Min1, Max1)
+		while(1):
+			Min1 = int(input('input the minimum1:'))
+			Max1 = int(input('input the maximum1:'))
+			width = int(input('width: '))
+			pos = Cut(xlist, Min1, Max1)
 
-		print(xlist[pos[0]], xlist[pos[1]])
-		cut_xlist = xlist[pos[0]:(pos[1]+1)]
-		if width != 1:
-			ylist_t = signal.savgol_filter(ylist,width,1)
-		if width == 1:
-			ylist_t = np.array(ylist)
-		cut_ylist = ylist_t[pos[0]:(pos[1]+1)]
-		print(len(cut_ylist))
-		
+			print(xlist[pos[0]], xlist[pos[1]])
+			cut_xlist = xlist[pos[0]:(pos[1]+1)]
+			if width != 1:
+				ylist_t = signal.savgol_filter(ylist,width,1)
+			if width == 1:
+				ylist_t = np.array(ylist)
+			cut_ylist = ylist_t[pos[0]:(pos[1]+1)]
+			print(len(cut_ylist))
+			plt.plot(xlist, ylist, c = 'gray')
+			plt.plot(cut_xlist, cut_ylist, c = 'black')
+			plt.legend(loc='upper right')
+			plt.show()
+			go = input("go?(y/n): ")
+			if go != 'n':
+				break
+
 		fit_xlist = np.array(cut_xlist)
 		fit_ylist = np.array(cut_ylist)/np.max(cut_ylist)
 		#SN2003gs/SN2003gs_207.dat
@@ -187,7 +196,7 @@ while(1):
 
 		def log_prior(theta):
 			v1, v2, w1, w2, r, A = theta
-			if -10000.0 < v1 < 10000.0 and -10000.0 < v2 < 10000.0 and 1.0 < w1 < 10000.0 and 1.0 < w2 < 10000.0 and 0.0 < r < 3.0 and 0.5 < A < 2.0:
+			if -10001.0 < v1 and v1 < v2 < 10001.0 and 1.0 < w1 < 10001.0 and 1.0 < w2 < 10001.0 and 0.0 < r < 3.0 and 0.5 < A < 2.0:
 				return 0.0
 			return -np.inf
 
@@ -205,32 +214,39 @@ while(1):
 		vsep = 6000
 		v1 = vshift - 0.5*vsep
 		v2 = vshift + 0.5*vsep
-		w1 = 2000
-		w2 = 4000
+		w1 = 3000
+		w2 = 3000
 		r = 0.7
 		A = 1.0
 		
 		guess = [v1,v2,w1,w2,r,A]
-		bounds = [(-10000,10000),(-10000,10000),(0,20000),(0,20000),(0,np.inf),(0,np.inf)]
+		bounds = [(-9900,9900),(-9900,9900),(2,9900),(2,9900),(1e-3,3-1e-3),(1e-3,2-1e-3)]
 		nll = lambda *args: -log_likelihood(*args)
 
 		res = optimize.minimize(nll, guess, args=(xlist_template1, ylist_template1, fit_xlist, fit_ylist), bounds=bounds)
 
 		rand_start = np.ones([32,6])
 		for i in range(32):
-			rand_start[i][0] = np.random.randn()*100
-			rand_start[i][1] = np.random.randn()*100
-			rand_start[i][2] = np.random.randn()*100
-			rand_start[i][3] = np.random.randn()*100
-			rand_start[i][4] = np.random.randn()*0.01
-			rand_start[i][5] = np.random.randn()*0.01
+			rand_start[i][0] = np.random.randn()*10
+			rand_start[i][1] = np.random.randn()*10
+			rand_start[i][2] = np.random.randn()*10
+			rand_start[i][3] = np.random.randn()*10
+			rand_start[i][4] = np.random.randn()*1e-4
+			rand_start[i][5] = np.random.randn()*1e-4
 		start = res.x + rand_start
+		print(res.x)
+		print(log_probability(res.x,xlist_template1, ylist_template1, fit_xlist, fit_ylist))
+		for i in range(32):
+			start_log_prob_tempt = log_probability(start[i],xlist_template1, ylist_template1, fit_xlist, fit_ylist)
+			if not np.isfinite(start_log_prob_tempt):
+				print(i, start_log_prob_tempt)
+		time.sleep(3)
 		nwalkers, ndim = start.shape
 
 		sampler = emcee.EnsembleSampler(
 			nwalkers, ndim, log_probability, args=(xlist_template1, ylist_template1, fit_xlist, fit_ylist)
 		)
-		sampler.run_mcmc(start, 50000, progress=True)
+		sampler.run_mcmc(start, 20000, progress=True)
 
 		fig, axes = plt.subplots(6, figsize=(10, 7), sharex=True)
 		samples = sampler.get_chain()
@@ -274,7 +290,7 @@ while(1):
 		tck = interpolate.splrep(xlist_template1, conv_result1, s=0)
 		conv_result = interpolate.splev(fit_xlist,tck,der=0)
 
-		pos_data = Cut(xlist, 5700, 6100)
+		pos_data = Cut(xlist, 5200, 6500)
 		xlist_data = xlist[pos_data[0]:pos_data[1]]
 		ylist_data = ylist[pos_data[0]:pos_data[1]]/np.max(cut_ylist)
 
@@ -285,6 +301,7 @@ while(1):
 		axs[1].set_xlabel('wavelength [$\\rm \\AA$]')
 		axs[1].set_ylabel('Scaled Flux')
 		axs[1].plot(xlist_data, ylist_data, c = 'gray', label = 'data')
+		axs[1].plot(fit_xlist, fit_ylist, c = 'black', label = 'smoothed data')
 		axs[1].plot(xlist_template1,conv_result1, c = 'b', label = 'conv_result')
 		axs[1].plot(fit_xlist, conv_result, c = 'r', label = 'fit region')
 		axs[1].legend(loc = 'upper left')

@@ -1,0 +1,5 @@
+20220422:
+	Paper:
+		Read 2010Natur_Maeda, improve introduction and discussion
+		collect data from Valley et al. 2020, 2007on
+		plot nebular vs. early observations figures
