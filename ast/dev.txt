@@ -1,7 +1,19 @@
 20220422:
 	Paper:
-		Read 2010Natur_Maeda, improve introduction and discussion
-20220422:
+		Read 2010Natur_Maeda, improve introduction and discussion Si II
+20220423:
+	Paper:
+		improve discussion Si II
+
+20220424:
+	Paper:
+		connection between Ni/Fe and delta15
+20220425:
+	Paper:
+		connection between Ni/Fe and delta15
+20220426:
+	Grad:
+		Co III
 	Paper:
 		collect data from Valley et al. 2020, 2007on
-		plot nebular vs. early observations figures
+		

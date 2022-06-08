@@ -550,6 +550,8 @@ for i in range(np.size(jlist)):
 		Ur_delta.append(Udelta1[jlist[i]])
 		r_vN.append((vFe1[jlist[i]]+vNi1[jlist[i]])/2)
 		Ur_vN.append(np.sqrt(UvFe1[jlist[i]]**2+UvNi1[jlist[i]]**2)/2)
+		if vSi1[jlist[i]] < 12:
+			print(name1[jlist[i]], vSi1[jlist[i]], (vFe1[jlist[i]]+vNi1[jlist[i]])/2)
 	elif ratio1[jlist[i]] > 0.13:
 		print(name1[jlist[i]])
 	else:
@@ -610,7 +612,7 @@ for i in range(np.size(b_vSi)):
 for i in range(np.size(r_vSi)):
 	plt.errorbar(r_vSi[i],r_vN[i],xerr = Ur_vSi[i],yerr = Ur_vN[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.show()
-
+'''
 plt.xlabel('The velocity of Si II at maximum [$\\rm 10^3\\ km\\ s^{-1}$]')
 plt.ylabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]')
 for i in range(np.size(g_vSi)):
@@ -619,6 +621,16 @@ for i in range(np.size(b_vSi)):
 	plt.errorbar(b_vSi[i],b_delta[i],xerr = Ub_vSi[i],yerr = Ub_delta[i], c = 'b', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(r_vSi)):
 	plt.errorbar(r_vSi[i],r_delta[i],xerr = Ur_vSi[i],yerr = Ur_delta[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
+plt.show()
+'''
+plt.xlabel('Nebular velocity [$\\rm 10^3\\ km\\ s^{-1}$]')
+plt.ylabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]')
+for i in range(np.size(g_vSi)):
+	plt.errorbar(g_vN[i],g_delta[i],xerr = Ug_vN[i],yerr = Ug_delta[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
+for i in range(np.size(b_vSi)):
+	plt.errorbar(b_vN[i],b_delta[i],xerr = Ub_vN[i],yerr = Ub_delta[i], c = 'b', capsize = 3, linestyle = '-', marker = 'o')
+for i in range(np.size(r_vSi)):
+	plt.errorbar(r_vN[i],r_delta[i],xerr = Ur_vN[i],yerr = Ur_delta[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.show()
 
 fig, ax = plt.subplots()
