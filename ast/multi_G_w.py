@@ -55,20 +55,31 @@ list_name = 'Uncertenty_IMG.dat'
 NameList, PhaseList, Min1List, Max1List, Min2List, Max2List,Min3List, Max3List, Min4List, Max4List, WidthList, ESList = read_list(list_name, 1)
 list_size = np.size(NameList)
 
-with open('/Users/pro/python/ast/appendix/FigureName.txt','w') as f:
-	time.sleep(1)
-
+initialize = False
 todo_name = input('SN name: ')
 for n in range(list_size):
 	if todo_name != NameList[n]:
-		continue
-	filename = NameList[n] + '/' + NameList[n] + '_' + PhaseList[n] +'.dat'
-	k = 0
-	while(1):
-		if NameList[n][k] == 'N':
-			break
-		k += 1
-	target_name = NameList[n][0:(k+1)] + ' ' + NameList[n][(k+1):]
+		if n != list_size-1:
+			continue
+		else:
+			initialize = True
+	if initialize:
+		phase = input('phase: ')
+		filename = todo_name + '/' + todo_name + '_' + phase +'.dat'
+		k = 0
+		while(1):
+			if todo_name[k] == 'N':
+				break
+			k += 1
+		target_name = todo_name[0:(k+1)] + ' ' + todo_name[(k+1):]
+	else:
+		filename = NameList[n] + '/' + NameList[n] + '_' + PhaseList[n] +'.dat'
+		k = 0
+		while(1):
+			if NameList[n][k] == 'N':
+				break
+			k += 1
+		target_name = NameList[n][0:(k+1)] + ' ' + NameList[n][(k+1):]
 
 	with open('/Users/pro/python/spectra_data/paper/' + filename,'r') as f:
 		line = f.readline()
@@ -134,44 +145,56 @@ for n in range(list_size):
 	length = len(xlist)
 	def fG(x, sigma, mu, A):
 		return A*np.exp(-(x-mu)**2/2/sigma**2)
-	'''
+	
+	plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
 	fig, ax = plt.subplots()
 	ax.set_title('%s + %sd' %(target_name, phase))
 	ax.set_xlabel('Wavelength [Å]')
-	ax.set_ylabel('Normalized Flux')
+	ax.set_ylabel('Scaled Flux')
 	ax.set_yticks([])
 	ax.plot(xlist,ylist,color = 'b')
 	
 
-	collection = collections.BrokenBarHCollection.span_where(np.linspace(6800,7800,100),ymin=0,ymax=2,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
+	collection = collections.BrokenBarHCollection.span_where(np.linspace(6800,7800,100),ymin=0,ymax=0.33,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
 	ax.add_collection(collection)
 
-	collection = collections.BrokenBarHCollection.span_where(np.linspace(5700,6300,100),ymin=0,ymax=2,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
+	collection = collections.BrokenBarHCollection.span_where(np.linspace(5700,6300,100),ymin=0,ymax=0.11,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
 	ax.add_collection(collection)
 
-	collection = collections.BrokenBarHCollection.span_where(np.linspace(4500,5400,100),ymin=0,ymax=13,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
+	collection = collections.BrokenBarHCollection.span_where(np.linspace(4500,4860,100),ymin=0,ymax=1.22,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
 	ax.add_collection(collection)
 
-	ax.text(6600,2.1,'[Fe II] + [Ni II]')
-	ax.text(5700,2.1,'[Co III]')
-	ax.text(4300,13,'[Fe III] + [Fe II]')
+	ax.text(6600,0.34,'[Fe II] + [Ni II]')
+	ax.text(5700,0.12,'[Co III]')
+	ax.text(4300,1.23,'[Fe III]')
 
 	plt.show()
-	'''
-
-	Min1 = int(Min1List[n])
-	Max1 = int(Max1List[n])
-	Min2 = int(Min2List[n])
-	Max2 = int(Max2List[n])
-	Min3 = int(Min3List[n])
-	Max3 = int(Max3List[n])
-	Min4 = int(Min4List[n])
-	Max4 = int(Max4List[n])
+	
+	if initialize:
+		Min1 = 6800
+		Max1 = 7000
+		Min2 = 7000
+		Max2 = 7300
+		Min3 = 7300
+		Max3 = 7500
+		Min4 = 7500
+		Max4 = 7800
+		width = 1
+	else:
+		Min1 = int(Min1List[n])
+		Max1 = int(Max1List[n])
+		Min2 = int(Min2List[n])
+		Max2 = int(Max2List[n])
+		Min3 = int(Min3List[n])
+		Max3 = int(Max3List[n])
+		Min4 = int(Min4List[n])
+		Max4 = int(Max4List[n])
+		width = int(WidthList[n])
 
 	xlist = xlist / (1+redshift)
 	ylist = ylist*np.power(10,fitzpatrick99(xlist,R_V*E_B_V,R_V)/2.5)
 
-	width = int(WidthList[n])
+	
 
 	pos = [0,0,0,0,0,0,0,0]
 	sig =  7000/2/300000/(2*np.log(2))**(0.5)      
@@ -211,7 +234,8 @@ for n in range(list_size):
 			elif int(xlist[i]) >= Max4 and indicator == 7:
 				pos[7] = i
 				break
-
+		print(np.size(ylist))
+		print(pos)
 		ylist_norm = ylist / np.max(ylist[pos[0]:(pos[7]+1)])
 		cut_xlist = xlist[pos[0]:(pos[7]+1)]
 		if width != 1:
@@ -357,8 +381,8 @@ for n in range(list_size):
 		plt.ylabel('Scaled Flux')
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
-		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
-		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
+		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
+		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
 		plt.plot(cut_xlist, y1+y7, color="purple", label="[Fe II]",linestyle='--')
 		plt.plot(cut_xlist, y2+y7, color="purple",linestyle='--')
 		plt.plot(cut_xlist, y3+y7, color="purple",linestyle='--')
@@ -500,7 +524,10 @@ for n in range(list_size):
 		flux_ratio = [flux_ratio]
 		high_ratio = [high_ratio]
 		k = 0
-		edge_size = float(ESList[n])
+		if initialize:
+			edge_size = int(input('edge_size: '))
+		else:	
+			edge_size = float(ESList[n])
 		while(k < 1000):
 			print(k)
 			bluet1 = np.random.rand()*edge_size*2 - edge_size + Min1

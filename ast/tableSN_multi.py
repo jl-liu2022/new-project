@@ -69,11 +69,18 @@ name, phase, delta, Udelta, redshift, ebv, vSi, UvSi, ratio, vFe, vNi, wFe, wNi,
 name.append('tail')
 
 UvFe, UvNi, UwFe, UwNi, U_r_flux = rU('Uncertenty_'+save_as+'.dat',1)
-ref_spectra = [1,2,2,2,'BSNIP','BSNIP','BSNIP',3,6,'BSNIP',7,'CfA',8,'BSNIP','BSNIP','BSNIP','CfA','BSNIP','BSNIP',9,9,10,10,10,10,10,
-11,12,13,13,13,13,13,14,14,12,15,13,10,10,17,14,19,20,19,21,22,22,'This work',19,14,23]
+ref_spectra = [1,2,2,2,'BSNIP','BSNIP','BSNIP',3,4,5,'BSNIP',6,'CfA',7,'BSNIP','BSNIP','BSNIP','CfA','BSNIP','BSNIP',8,8,9,9,9,9,9,
+10,11,12,12,12,12,12,13,13,11,14,12,9,9,16,13,18,19,18,21,22,22,'This work','This work',18,13,20]
+
+def Fe56(t, Ni, Co, lambda_Ni, lambda_Co):
+	return Co + Ni - Co*np.exp(-lambda_Co*t) - lambda_Co*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Ni*t) + lambda_Ni*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Co*t)
+
+lambda_Ni = 1/8.77
+lambda_Co = 1/111
+
 U_ratio = []
 for i in range(number):
-	ratio[i] *= 58/56*mean/integrate
+	ratio[i] *= 58/56*mean/integrate*Fe56(phase[i], 1, 0, lambda_Ni, lambda_Co)
 	u1 = 0.4
 	u2 = U_r_flux[i]/r_flux[i]
 	UvFe[i] += 200

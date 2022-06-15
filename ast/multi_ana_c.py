@@ -5,7 +5,7 @@ import scipy.signal as signal
 from extinction import fitzpatrick99
 from scipy.optimize import curve_fit
 
-
+plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
 
 
 def rdata(filename, start):
@@ -229,13 +229,8 @@ def get_quene(array):
 
 qlist, plist = get_quene(delta1)
 
-fig, ax = plt.subplots()
-ax.set_xlabel('Wavelength [Å]')
-ax.set_ylabel('Scaled Flux + constant')
-ax.set_yticks([])
 spectra_x = []
 spectra_y = []
-n = 0
 for i in range(number1):
 	sepctrum_name = name1[i] + '/' + name1[i] + '_' + str(phase1[i]) +'.dat'
 	with open('/Users/pro/python/spectra_data/paper/' + sepctrum_name,'r') as f:
@@ -278,40 +273,6 @@ for i in range(number1):
 	ylist = np.array(ylist)
 	length = len(xlist)
 
-	'''
-	if phase < 300 and phase > 250 and n<5 and name1[i]!='SN1986G':
-		Min1 = 4000
-		Max1 = 9000
-		pos = [0,np.size(xlist)-1]
-		indicator = 0
-		for j in range(length):
-			if int(xlist[j]) >= Min1 and indicator == 0:
-				pos[0] = j
-				indicator = 1
-			elif int(xlist[j]) >= Max1 and indicator == 1:
-				pos[1] = j
-				break
-		plt.plot(xlist[pos[0]:(pos[1])], ylist[pos[0]:(pos[1])]/np.max(ylist[pos[0]:(pos[1])]) + 0.5*n, c = 'black')
-		plt.text(9100,ylist[pos[1]]+0.5*n, name1[i] + ', +%s d' %phase1[i])
-		plt.scatter(10000,0,alpha=0)
-		n += 1
-	'''
-	if name1[i] == 'SN2021hpr':
-		Min1 = 4000
-		Max1 = 9000
-		pos = [0,np.size(xlist)-1]
-		indicator = 0
-		for j in range(length):
-			if int(xlist[j]) >= Min1 and indicator == 0:
-				pos[0] = j
-				indicator = 1
-			elif int(xlist[j]) >= Max1 and indicator == 1:
-				pos[1] = j
-				break
-		scale_max = np.max(ylist[pos[0]: pos[1]])
-		plt.plot(xlist, ylist/scale_max+1*n)
-		plt.text(xlist[-1], ylist[-1]/scale_max+1*n, name1[i] + ', +%s d' %phase1[i])
-		n += 1
 	Min1 = 6600
 	Max1 = 8000
 	xlist = xlist / (1+redshift)
@@ -331,12 +292,9 @@ for i in range(number1):
 	spectra_x.append(xlist[pos[0]:(pos[1]+1)])
 	spectra_y.append(ylist[pos[0]:(pos[1]+1)]+0.01*qlist[i])
 
-plt.scatter(12000,0,alpha=0)
-plt.show()
-
 fig, ax = plt.subplots()
-ax.set_xlabel('Wavelength [Å]')
-ax.set_ylabel('Scaled Flux + constant')
+ax.set_xlabel('静止波长 [Å]')
+ax.set_ylabel('等比缩放的流量 + 常数')
 ax.set_yticks([])
 i = 0
 while(i < number1):
@@ -348,7 +306,7 @@ while(i < number1):
 		end = np.argmax(np.array(spectra_x[i])>=edge_red[i])
 		continuum_x = [spectra_x[i][start], spectra_x[i][end]]
 		continuum_y = [spectra_y[i][start]-0.1, spectra_y[i][end]-0.1]
-		plt.plot(continuum_x, continuum_y, c='gray', label = 'continuum')
+		plt.plot(continuum_x, continuum_y, c='gray', label = '连续谱')
 		size_x = np.size(spectra_x[i])
 		plt.text(spectra_x[i][size_x-1]+50, spectra_y[i][size_x-1] - 0.1, name1[i] + ', +%s d' %phase1[i])
 		while(name1[n+1] == 'SN2011fe'):
@@ -393,11 +351,11 @@ collection = collections.BrokenBarHCollection.span_where(np.linspace(6800,7000,1
 ax.add_collection(collection)
 plt.legend(loc='upper right')
 plt.show()
-'''
+
 cm = plt.cm.get_cmap('viridis')
 for i in range(13):
-	plt.xlabel('Rest Wavelength [Å]')
-	plt.ylabel('Scaled Flux + constant')
+	plt.xlabel('静止波长 [Å]')
+	plt.ylabel('等比缩放的流量 + 常数')
 	plt.yticks([])
 	plt.scatter(spectra_x[plist[i*4+2]], spectra_y[plist[i*4+2]], c=delta1[plist[i*4+2]]*np.ones(np.size(spectra_x[plist[i*4+2]])), vmin = 0.8, vmax = 1.5, cmap = cm, s=1)
 	size_x = np.size(spectra_x[plist[i*4+2]])
@@ -407,7 +365,7 @@ plt.plot(9500,np.min(spectra_y[plist[2]]),alpha=0)
 plt.show()
 
 ylist = ylist*np.max(signal.savgol_filter(ylist[pos[0]:(pos[1]+1)],51,1))/np.max(ylist[pos[0]:(pos[1]+1)])
-
+'''
 for j in range(4):
 	for i in range(13*j, 13*(j+1)):
 		plt.xlabel('Rest Wavelength [Å]')
@@ -464,8 +422,8 @@ plt.gca().add_artist(l1)
 plt.show()
 
 np.random.seed(399991)
-plt.xlabel('Phase [Days Since Peak Brightness]')
-plt.ylabel('[Ni II] velocity[km/s]')
+plt.xlabel('阶段 (光极大之后天数)')
+plt.ylabel('[Ni II]速度 [km/s]')
 plt.plot(np.linspace(150,450,100),np.zeros(100),linestyle='--',c = 'black')
 line = []
 head = 0
@@ -486,8 +444,8 @@ plt.show()
 vNebular1 = (np.array(vNi1)+np.array(vFe1))/2
 UvNebular1 = np.sqrt(np.array(UvNi1)**2+np.array(UvFe1)**2)/2
 np.random.seed(399991)
-plt.xlabel('Phase [Days Since Peak Brightness]')
-plt.ylabel('Nebular Velocity[km/s]')
+plt.xlabel('阶段 (光极大之后天数)')
+plt.ylabel('星云速度 [km/s]')
 plt.plot(np.linspace(150,450,100),np.zeros(100),linestyle='--',c = 'black')
 line = []
 head = 0
@@ -548,7 +506,7 @@ for i in range(np.size(ModelNameList)):
 
 np.random.seed(399991)
 fig, ax = plt.subplots()
-ax.set_xlabel('Phase [Days Since Peak Brightness]')
+ax.set_xlabel('阶段 (光极大之后天数)')
 ax.set_ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
 
 ax.fill_between(day_list, np.ones_like(day_list)*double_sub, np.ones_like(day_list)*double_sup, alpha=0.5, color = 'gray')
@@ -712,7 +670,7 @@ params_r, params_covariance_r = curve_fit(f_line, r_vSi, r_ratio, [1,0])
 fig, ax = plt.subplots()
 ax.fill_between(np.linspace(8,17,2), np.ones(2)*double_sub, np.ones(2)*double_sup, alpha=0.5, color = 'gray')
 ax.fill_between(np.linspace(8,17,2), np.ones(2)*ratio_n3, np.ones(2)*ratio_n20, alpha=0.5, color = 'yellow')
-plt.xlabel('Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
+plt.xlabel('光极大附近硅线速度 [$\\rm 10^3\\ km\\ s^{-1}$]')
 plt.ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
 for i in range(np.size(g_vSi)):
 	plt.errorbar(g_vSi[i],g_ratio[i],xerr = Ug_vSi[i],yerr = Ug_ratio[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
@@ -728,8 +686,8 @@ plt.show()
 
 
 
-plt.xlabel('Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
-plt.ylabel('$Nebular Velocity [$\\rm \\ km\\ s^{-1}$]')
+plt.xlabel('Si II velocity near peak brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
+plt.ylabel('$Nebular velocity [$\\rm 10^3\\ km\\ s^{-1}$]')
 for i in range(np.size(g_vSi)):
 	plt.errorbar(g_vSi[i],g_vN[i],xerr = Ug_vSi[i],yerr = Ug_vN[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(b_vSi)):
@@ -748,7 +706,7 @@ for i in range(np.size(r_vSi)):
 	plt.errorbar(r_vSi[i],r_delta[i],xerr = Ur_vSi[i],yerr = Ur_delta[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.show()
 '''
-plt.xlabel('Nebular Velocity [$\\rm \\ km\\ s^{-1}$]')
+plt.xlabel('星云速度 [$\\rm km\\ s^{-1}$]')
 plt.ylabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]')
 for i in range(np.size(g_vSi)):
 	plt.errorbar(g_vN[i],g_delta[i],xerr = Ug_vN[i],yerr = Ug_delta[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')

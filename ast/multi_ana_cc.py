@@ -197,10 +197,6 @@ UvFe1, UvNi1, UwFe1, UwNi1, U_r_flux1, edge_blue, edge_red = rU('Uncertenty_IMG.
 
 print(number1)
 
-def Fe56(t, Ni, Co, lambda_Ni, lambda_Co):
-	return Co + 1 - Co*np.exp(-lambda_Co*t) - lambda_Co*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Ni*t) + lambda_Ni*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Co*t)
-
-
 def get_quene(array):
 	size = np.size(array)
 	if size < 2:
@@ -229,13 +225,8 @@ def get_quene(array):
 
 qlist, plist = get_quene(delta1)
 
-fig, ax = plt.subplots()
-ax.set_xlabel('Wavelength [Å]')
-ax.set_ylabel('Scaled Flux + constant')
-ax.set_yticks([])
 spectra_x = []
 spectra_y = []
-n = 0
 for i in range(number1):
 	sepctrum_name = name1[i] + '/' + name1[i] + '_' + str(phase1[i]) +'.dat'
 	with open('/Users/pro/python/spectra_data/paper/' + sepctrum_name,'r') as f:
@@ -278,40 +269,6 @@ for i in range(number1):
 	ylist = np.array(ylist)
 	length = len(xlist)
 
-	'''
-	if phase < 300 and phase > 250 and n<5 and name1[i]!='SN1986G':
-		Min1 = 4000
-		Max1 = 9000
-		pos = [0,np.size(xlist)-1]
-		indicator = 0
-		for j in range(length):
-			if int(xlist[j]) >= Min1 and indicator == 0:
-				pos[0] = j
-				indicator = 1
-			elif int(xlist[j]) >= Max1 and indicator == 1:
-				pos[1] = j
-				break
-		plt.plot(xlist[pos[0]:(pos[1])], ylist[pos[0]:(pos[1])]/np.max(ylist[pos[0]:(pos[1])]) + 0.5*n, c = 'black')
-		plt.text(9100,ylist[pos[1]]+0.5*n, name1[i] + ', +%s d' %phase1[i])
-		plt.scatter(10000,0,alpha=0)
-		n += 1
-	'''
-	if name1[i] == 'SN2021hpr':
-		Min1 = 4000
-		Max1 = 9000
-		pos = [0,np.size(xlist)-1]
-		indicator = 0
-		for j in range(length):
-			if int(xlist[j]) >= Min1 and indicator == 0:
-				pos[0] = j
-				indicator = 1
-			elif int(xlist[j]) >= Max1 and indicator == 1:
-				pos[1] = j
-				break
-		scale_max = np.max(ylist[pos[0]: pos[1]])
-		plt.plot(xlist, ylist/scale_max+1*n)
-		plt.text(xlist[-1], ylist[-1]/scale_max+1*n, name1[i] + ', +%s d' %phase1[i])
-		n += 1
 	Min1 = 6600
 	Max1 = 8000
 	xlist = xlist / (1+redshift)
@@ -331,12 +288,10 @@ for i in range(number1):
 	spectra_x.append(xlist[pos[0]:(pos[1]+1)])
 	spectra_y.append(ylist[pos[0]:(pos[1]+1)]+0.01*qlist[i])
 
-plt.scatter(12000,0,alpha=0)
-plt.show()
-
+plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
 fig, ax = plt.subplots()
-ax.set_xlabel('Wavelength [Å]')
-ax.set_ylabel('Scaled Flux + constant')
+ax.set_xlabel('波长 [Å]')
+ax.set_ylabel('等比缩放的流量 + 常数')
 ax.set_yticks([])
 i = 0
 while(i < number1):
@@ -348,7 +303,7 @@ while(i < number1):
 		end = np.argmax(np.array(spectra_x[i])>=edge_red[i])
 		continuum_x = [spectra_x[i][start], spectra_x[i][end]]
 		continuum_y = [spectra_y[i][start]-0.1, spectra_y[i][end]-0.1]
-		plt.plot(continuum_x, continuum_y, c='gray', label = 'continuum')
+		plt.plot(continuum_x, continuum_y, c='gray', label = '连续谱')
 		size_x = np.size(spectra_x[i])
 		plt.text(spectra_x[i][size_x-1]+50, spectra_y[i][size_x-1] - 0.1, name1[i] + ', +%s d' %phase1[i])
 		while(name1[n+1] == 'SN2011fe'):
@@ -388,16 +343,16 @@ while(i < number1):
 	'''
 	i += 1
 
-plt.plot(8850,0.3,alpha=0)
+plt.plot(8700,0.3,alpha=0)
 collection = collections.BrokenBarHCollection.span_where(np.linspace(6800,7000,100),ymin=0,ymax=0.4,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
 ax.add_collection(collection)
 plt.legend(loc='upper right')
 plt.show()
-'''
+
 cm = plt.cm.get_cmap('viridis')
 for i in range(13):
-	plt.xlabel('Rest Wavelength [Å]')
-	plt.ylabel('Scaled Flux + constant')
+	plt.xlabel('静止波长 [Å]')
+	plt.ylabel('等比缩放的流量 + 常数')
 	plt.yticks([])
 	plt.scatter(spectra_x[plist[i*4+2]], spectra_y[plist[i*4+2]], c=delta1[plist[i*4+2]]*np.ones(np.size(spectra_x[plist[i*4+2]])), vmin = 0.8, vmax = 1.5, cmap = cm, s=1)
 	size_x = np.size(spectra_x[plist[i*4+2]])
@@ -407,11 +362,10 @@ plt.plot(9500,np.min(spectra_y[plist[2]]),alpha=0)
 plt.show()
 
 ylist = ylist*np.max(signal.savgol_filter(ylist[pos[0]:(pos[1]+1)],51,1))/np.max(ylist[pos[0]:(pos[1]+1)])
-
 for j in range(4):
 	for i in range(13*j, 13*(j+1)):
-		plt.xlabel('Rest Wavelength [Å]')
-		plt.ylabel('Scaled Flux + constant')
+		plt.xlabel('精致波长 [Å]')
+		plt.ylabel('等比缩放的流量 + 常数')
 		plt.yticks([])
 		plt.scatter(spectra_x[plist[i]], spectra_y[plist[i]]+0.01*3*i, c=delta1[plist[i]]*np.ones(np.size(spectra_x[plist[i]])), vmin = 0.8, vmax = 1.5, cmap = cm, s=1)
 		size_x = np.size(spectra_x[plist[i]])
@@ -419,7 +373,7 @@ for j in range(4):
 	plt.colorbar(label = '$\\Delta m_{15}(B)$')
 	plt.plot(9500,np.min(spectra_y[plist[13*j]]+0.01*3*i),alpha=0)
 	plt.show()
-'''
+
 marker = ['.','o','v','^','<','>','s','p','x','d','*','h','H','+','x','D','d','_','.','o','v','^','<','>','s','p','*','h','H','+','x','D','x','d','_']
 
 sub_shape = {"N":"o", "91T":"v", "91bg":"^"}
@@ -427,16 +381,10 @@ sub_shape = {"N":"o", "91T":"v", "91bg":"^"}
 integrate = 0.5372471812372228
 mean = 0.5023869679593065
 
-def Fe56(t, Ni, Co, lambda_Ni, lambda_Co):
-	return Co + Ni - Co*np.exp(-lambda_Co*t) - lambda_Co*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Ni*t) + lambda_Ni*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Co*t)
-
-lambda_Ni = 1/8.77
-lambda_Co = 1/111
-
 u1 = 0.4
 U_ratio1 = []
 for i in range(number1):
-	ratio1[i] = ratio1[i]*58/56*mean/integrate*Fe56(phase1[i]+18, 1, 0, lambda_Ni, lambda_Co)
+	ratio1[i] = ratio1[i]*58/56*mean/integrate
 	u4 = U_r_flux1[i]/r_flux1[i]
 	UvFe1[i] += 200
 	UvNi1[i] += 200
@@ -444,8 +392,8 @@ for i in range(number1):
 	U_ratio1.append(U_ratio1_t)
 
 np.random.seed(399991)
-plt.xlabel('Phase [Days Since Peak Brightness]')
-plt.ylabel('Velocity of [Fe II] [km/s]')
+plt.xlabel('阶段 (光极大之后天数)')
+plt.ylabel('[Fe II]速度 [km/s]')
 plt.plot(np.linspace(150,450,100),np.zeros(100),linestyle='--',c = 'black')
 line = []
 head = 0
@@ -464,8 +412,8 @@ plt.gca().add_artist(l1)
 plt.show()
 
 np.random.seed(399991)
-plt.xlabel('Phase [Days Since Peak Brightness]')
-plt.ylabel('[Ni II] velocity[km/s]')
+plt.xlabel('阶段 (光极大之后天数)')
+plt.ylabel('[Ni II]速度 [km/s]')
 plt.plot(np.linspace(150,450,100),np.zeros(100),linestyle='--',c = 'black')
 line = []
 head = 0
@@ -486,8 +434,8 @@ plt.show()
 vNebular1 = (np.array(vNi1)+np.array(vFe1))/2
 UvNebular1 = np.sqrt(np.array(UvNi1)**2+np.array(UvFe1)**2)/2
 np.random.seed(399991)
-plt.xlabel('Phase [Days Since Peak Brightness]')
-plt.ylabel('Nebular Velocity[km/s]')
+plt.xlabel('阶段 (光极大之后天数)')
+plt.ylabel('星云速度 [km/s]')
 plt.plot(np.linspace(150,450,100),np.zeros(100),linestyle='--',c = 'black')
 line = []
 head = 0
@@ -505,72 +453,30 @@ plt.legend(handles=line[int(n/2):], loc = 'upper right')
 plt.gca().add_artist(l1)
 plt.show()
 
-def Fe56(t, Ni, Co, lambda_Ni, lambda_Co):
-	return Co + Ni - Co*np.exp(-lambda_Co*t) - lambda_Co*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Ni*t) + lambda_Ni*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Co*t)
-
-
-
-day_list = np.linspace(150,450,2)
-
-double_sup = 0.061
-double_sub = 0.015
-
-ModelNameList = ['n1','n10', 'n100', 'n100h', 'n100l', 'n100_z0.01', 'n150', 'n1600', 'n1600c', 'n20', 'n200', 'n3', 'n300c', 'n40', 'n5']
-Ni_58_List = []
-Ni_56_List = []
-Co_56_list = []
-for item in ModelNameList:
-	with open('/Users/pro/python/ast/models/ddt_2013_' + item + '_abundances.dat','r') as f:
-		line = f.readline()
-		while line:
-			if line == '\n':
-				line = f.readline()
-				continue
-			a = line.split()
-			if a[0] == 'ni56':
-				Ni_56_List.append(float(a[1]))
-			if a[0] == 'co56':
-				Co_56_list.append(float(a[1]))
-			if a[0] == 'ni58':
-				Ni_58_List.append(float(a[1]))
-			line = f.readline()
-for i in range(np.size(ModelNameList)):
-	if ModelNameList[i] == 'n3':
-		Ni_56 = Ni_56_List[i]
-		Co_56 = Co_56_list[i]
-		Ni_58 = Ni_58_List[i]
-		ratio_n3 = Ni_58 / Ni_56
-	if ModelNameList[i] == 'n20':
-		Ni_56 = Ni_56_List[i]
-		Co_56 = Co_56_list[i]
-		Ni_58 = Ni_58_List[i]
-		ratio_n20 = 0.104
-
 np.random.seed(399991)
 fig, ax = plt.subplots()
-ax.set_xlabel('Phase [Days Since Peak Brightness]')
-ax.set_ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
-
-ax.fill_between(day_list, np.ones_like(day_list)*double_sub, np.ones_like(day_list)*double_sup, alpha=0.5, color = 'gray')
-ax.fill_between(day_list, np.ones_like(day_list)*ratio_n3, np.ones_like(day_list)*ratio_n20, alpha=0.5, color = 'yellow')
+ax.set_xlabel('阶段 (光极大之后天数)')
+ax.set_ylabel('$\\rm M_{Ni}/M_{Fe}$')
+ax.scatter(150,0, alpha = 0)
+ax.scatter(430,0, alpha = 0)
 line = []
 head = 0
 n = 0
 for i in range(1,number1+1):
 	if name1[head] != name1[i]:
 		color = (np.random.rand(),np.random.rand(),np.random.rand())
-		ax.errorbar(phase1[head:i],ratio1[head:i],yerr = np.array(U_ratio1[head:i]), capsize = 3, linestyle = '-', c = color, marker = marker[n])
+		ax.errorbar(phase1[head:i],ratio1[head:i],yerr = np.array(U_ratio1[head:i]), capsize = 3, linestyle = '-', c = color,marker = marker[n])
 		line_t, = ax.plot(phase1[head:i],ratio1[head:i],label = '%s'%name1[head], linestyle = '-', c = color,marker = marker[n])
 		line.append(line_t)
-		if name1[head] == 'SN2002bo':
-			ax.text(phase1[head]+5, ratio1[head], '02bo', color=color)
-		if name1[head] == 'SN2015F':
-			ax.text(phase1[head]+5, ratio1[head], '15F', color=color)
 		head = i
 		n += 1
 l1 = ax.legend(handles=line[0:int(n/2)], loc = 'upper left')
 ax.legend(handles=line[int(n/2):], loc = 'upper right')
 plt.gca().add_artist(l1)
+collection = collections.BrokenBarHCollection.span_where(np.linspace(150,450,100),ymin=0.016,ymax=0.06,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
+ax.add_collection(collection)
+collection = collections.BrokenBarHCollection.span_where(np.linspace(150,450,100),ymin=0.064,ymax=0.104,where=np.ones(100)>0,facecolor='yellow',alpha=0.5)
+ax.add_collection(collection)
 ax.text(150,0.02,'sub-M$_{ch}$ Double Det.')
 ax.text(150,0.07,'M$_{ch}$ Del. Det.')
 plt.show()
@@ -597,8 +503,7 @@ n = 0
 for i in range(1,number1+1):
 	if name1[head] != name1[i]:
 		if head + 1 != i:
-			for j in range(head, i, 1):
-				
+			for j in range(head, i-1, 1):
 				d_to_300_first = np.abs(phase1[j]-300)
 				d_to_300_second = np.abs(phase1[j+1]-300)
 				if d_to_300_first >= d_to_300_second:
@@ -608,12 +513,10 @@ for i in range(1,number1+1):
 				else:
 					head = j
 					break
-				
 		jlist.append(head)
 		head = i
 		n += 1
 print(np.size(jlist))
-print(jlist)
 
 print()
 g_vSi = []
@@ -710,10 +613,8 @@ params_b, params_covariance_b = curve_fit(f_line, b_vSi, b_ratio, [1,0])
 params_r, params_covariance_r = curve_fit(f_line, r_vSi, r_ratio, [1,0])
 
 fig, ax = plt.subplots()
-ax.fill_between(np.linspace(8,17,2), np.ones(2)*double_sub, np.ones(2)*double_sup, alpha=0.5, color = 'gray')
-ax.fill_between(np.linspace(8,17,2), np.ones(2)*ratio_n3, np.ones(2)*ratio_n20, alpha=0.5, color = 'yellow')
-plt.xlabel('Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
-plt.ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
+plt.xlabel('Si II velocity at max. [$\\rm 10^3\\ km\\ s^{-1}$]')
+plt.ylabel('$\\rm M_{Ni}/M_{Fe}$')
 for i in range(np.size(g_vSi)):
 	plt.errorbar(g_vSi[i],g_ratio[i],xerr = Ug_vSi[i],yerr = Ug_ratio[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(b_vSi)):
@@ -722,14 +623,18 @@ for i in range(np.size(r_vSi)):
 	plt.errorbar(r_vSi[i],r_ratio[i],xerr = Ur_vSi[i],yerr = Ur_ratio[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.plot(np.linspace(9,13,10), f_line(np.linspace(9,13,10), params_b[0], params_b[1]), c = 'b', linestyle = '--')
 plt.plot(np.linspace(9,17,10), f_line(np.linspace(9,17,10), params_r[0], params_r[1]), c = 'r', linestyle = '--')
+collection = collections.BrokenBarHCollection.span_where(np.linspace(9,17,100),ymin=0.016,ymax=0.06,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
+ax.add_collection(collection)
+collection = collections.BrokenBarHCollection.span_where(np.linspace(9,17,100),ymin=0.064,ymax=0.104,where=np.ones(100)>0,facecolor='yellow',alpha=0.5)
+ax.add_collection(collection)
 ax.text(14,0.02,'sub-M$_{ch}$ Double Det.')
 ax.text(15,0.09,'M$_{ch}$ Del. Det.')
 plt.show()
 
 
 
-plt.xlabel('Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
-plt.ylabel('$Nebular Velocity [$\\rm \\ km\\ s^{-1}$]')
+plt.xlabel('The velocity of Si II at maximum [$\\rm 10^3\\ km\\ s^{-1}$]')
+plt.ylabel('$Nebular velocity [$\\rm 10^3\\ km\\ s^{-1}$]')
 for i in range(np.size(g_vSi)):
 	plt.errorbar(g_vSi[i],g_vN[i],xerr = Ug_vSi[i],yerr = Ug_vN[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(b_vSi)):
@@ -748,7 +653,7 @@ for i in range(np.size(r_vSi)):
 	plt.errorbar(r_vSi[i],r_delta[i],xerr = Ur_vSi[i],yerr = Ur_delta[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.show()
 '''
-plt.xlabel('Nebular Velocity [$\\rm \\ km\\ s^{-1}$]')
+plt.xlabel('Nebular velocity [$\\rm 10^3\\ km\\ s^{-1}$]')
 plt.ylabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]')
 for i in range(np.size(g_vSi)):
 	plt.errorbar(g_vN[i],g_delta[i],xerr = Ug_vN[i],yerr = Ug_delta[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
@@ -759,16 +664,18 @@ for i in range(np.size(r_vSi)):
 plt.show()
 
 fig, ax = plt.subplots()
-ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*double_sub, np.ones(2)*double_sup, alpha=0.5, color = 'gray')
-ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*ratio_n3, np.ones(2)*ratio_n20, alpha=0.5, color = 'yellow')
 plt.xlabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]')
-plt.ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
+plt.ylabel('$\\rm M_{Ni}/M_{Fe}$')
 for i in range(np.size(g_vSi)):
 	plt.errorbar(g_delta[i],g_ratio[i],xerr = Ug_delta[i],yerr = Ug_ratio[i], c = 'gray', capsize = 3, linestyle = '-', marker = sub_shape[g_subc[i]])
 for i in range(np.size(b_delta)):
 	plt.errorbar(b_delta[i],b_ratio[i],xerr = Ub_delta[i],yerr = Ub_ratio[i], c = 'b', capsize = 3, linestyle = '-', marker = sub_shape[b_subc[i]])
 for i in range(np.size(r_vSi)):
 	plt.errorbar(r_delta[i],r_ratio[i],xerr = Ur_delta[i],yerr = Ur_ratio[i], c = 'r', capsize = 3, linestyle = '-', marker = sub_shape[r_subc[i]])
+collection = collections.BrokenBarHCollection.span_where(np.linspace(0.7,2,100),ymin=0.016,ymax=0.06,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
+ax.add_collection(collection)
+collection = collections.BrokenBarHCollection.span_where(np.linspace(0.7,2,100),ymin=0.064,ymax=0.104,where=np.ones(100)>0,facecolor='yellow',alpha=0.5)
+ax.add_collection(collection)
 ax.text(1.6,0.02,'sub-M$_{ch}$ Double Det.')
 ax.text(1.6,0.07,'M$_{ch}$ Del. Det.')
 ax.text(1.75,0.04,'86G', c='b')
@@ -778,6 +685,8 @@ plt.show()
 for i in range(np.size(jlist)):
 	plt.scatter(delta1[jlist[i]], vSi1[jlist[i]])
 plt.show()
+
+ratio_M = []
 
 vSit = []
 UvSit = []

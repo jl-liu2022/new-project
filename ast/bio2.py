@@ -8,6 +8,8 @@ import time
 from scipy import interpolate
 from extinction import fitzpatrick99 
 
+AutocorrError = emcee.autocorr.AutocorrError
+
 def Append(l1, l2):
 	l3 = []
 	for item in l1:
@@ -242,14 +244,23 @@ while(1):
 				print(i, start_log_prob_tempt)
 		time.sleep(3)
 		nwalkers, ndim = start.shape
+		
+		steps = 20000
+		while(1):
+			sampler = emcee.EnsembleSampler(
+				nwalkers, ndim, log_probability, args=(xlist_template1, ylist_template1, fit_xlist, fit_ylist)
+			)
+			sampler.run_mcmc(start, steps, progress=True)
 
-		sampler = emcee.EnsembleSampler(
-			nwalkers, ndim, log_probability, args=(xlist_template1, ylist_template1, fit_xlist, fit_ylist)
-		)
-		sampler.run_mcmc(start, 20000, progress=True)
-
-		fig, axes = plt.subplots(6, figsize=(10, 7), sharex=True)
+			
+			try:
+				tau = sampler.get_autocorr_time()
+			except AutocorrError:
+				steps *= 2
+			else:
+				break	
 		samples = sampler.get_chain()
+		fig, axes = plt.subplots(6, figsize=(10, 7), sharex=True)
 		labels = ["v1", "v2", "w1","w2", "r", "A"]
 		for i in range(ndim):
 		    ax = axes[i]
@@ -261,8 +272,7 @@ while(1):
 		axes[-1].set_xlabel("step number")
 		plt.show()
 
-		tau = sampler.get_autocorr_time()
-		print(tau)
+		
 
 		flat_samples = sampler.get_chain(discard=int(2.5*np.max(tau)), thin=int(np.max(tau)/2), flat=True)
 		print(flat_samples.shape)
@@ -274,8 +284,12 @@ while(1):
 			if log_likelihood_value[i] == max_log_likelihood:
 				pos_max = i
 		theta = flat_samples[pos_max]
+		
 		v1, v2, w1, w2, r, A = theta
 		print(theta)
+		v_shift = (v1 + v2)/2
+		v_sep = v2 - v1
+		
 		 
 
 		xlist_template1_v = w_to_v_norm(xlist_template1, 5900)
@@ -312,7 +326,37 @@ while(1):
 
 		plt.show()
 
+		
+
+		fig, axs = plt.subplots()
+		plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
+		plt.rcParams['axes.unicode_minus'] = False
+		axs.set_xlabel('Rest Wavelength [$\\rm \\AA$]')
+		axs.set_ylabel('Scaled FLux')
+		axs.set_title('SN 1999by +183d')
+		axs.plot(xlist_template1,ylist_template1)
+		plt.show()
+
+		fig, axs = plt.subplots()
+		plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
+		plt.rcParams['axes.unicode_minus'] = False
+		axs.set_title('%s  +%sd' %(target_name, phase))
+		axs.set_xlabel('Rest Wavelength [$\\rm \\AA$]')
+		axs.set_ylabel('Scaled FLux')
+		axs.plot(xlist_data, ylist_data, c = 'gray', label = 'data')
+		axs.plot(fit_xlist, fit_ylist, c = 'black', label = 'smoothed data')
+		axs.plot(xlist_template1,conv_result1, c = 'r', label = 'convolution')
+		axs.plot(fit_xlist, np.zeros_like(fit_xlist), c = 'b', label = 'fit region')
+		axs.legend(loc = 'upper left')
+		axins = axs.inset_axes([0.75,0.75,0.24,0.24])
+		axins.set_yticklabels([])
+		axins.set_xlabel('Velocity [km s$^{-1}$]')
+		axins.plot(xlist_template1_v,kernel*A)
+
+		plt.show()
 		again = int(input('again?: '))
 		if again != 1:
 			break
+	with open('bio2_data.dat','a') as f:
+		f.writelines('%s %s %s %s %s %s %s \n' %(target_name, phase, v_shift, v_sep, w1, w2, r))
 #2003hv, figure in figure, edge

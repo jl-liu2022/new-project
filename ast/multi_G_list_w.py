@@ -187,6 +187,7 @@ for n in range(list_size):
 		ylist_norm = ylist / np.max(ylist[pos[0]:(pos[5]+1)])
 		cut_xlist = xlist[pos[0]:(pos[5]+1)]
 		if width != 1:
+			print(width)
 			ylist_t = signal.savgol_filter(ylist_norm,width,1)
 		if width == 1:
 			ylist_t = np.array(ylist_norm)

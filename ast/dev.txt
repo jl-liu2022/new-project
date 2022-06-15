@@ -15,5 +15,18 @@
 	Grad:
 		Co III
 	Paper:
-		collect data from Valley et al. 2020, 2007on
+		collect data from Valley et al. 2020, 2014bv 2015I 2016gxp 
+		2007on, 2002dj, 2005am x, 2011iv x
+20220427:
+	Paper:
+		collect early observations
+20220428:
+	Paper:
+		only SN 2002dj +273 is added
+20220429:
+	Paper:
+		caution about the Ni/Fe and Si velocity
+		check ebv
+
+
 		
