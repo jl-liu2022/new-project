@@ -182,9 +182,9 @@ for n in range(list_size):
 		width = 1
 	else:
 		Min1 = int(Min1List[n])
-		Max1 = int(Min2List[n])
+		Max1 = int(Max1List[n])
 		Min2 = int(Min2List[n])
-		Max2 = int(Min3List[n])
+		Max2 = int(Max2List[n])
 		Min3 = int(Min3List[n])
 		Max3 = int(Max3List[n])
 		Min4 = int(Min4List[n])
@@ -202,8 +202,8 @@ for n in range(list_size):
 	sup1 =  float('inf')
 	sub2 =  0
 	sup2 =  upper_FWHM_Ni/2/300000/(2*np.log(2))**(1/2)
-	bound =  ([sub1,0.98,0,0,sub2,sub1,0.98,0],[sup1,1.02,float('inf'),float('inf'),sup2,sig*2,1.02,float('inf')])
-	guess = [sig,1,1,1,sig,sig,1,0.3]
+	bound =  ([sub1,0.98,0,0,sub2],[sup1,1.02,float('inf'),float('inf'),sup2])
+	guess = [sig,1,1,1,sig]
 	internal = int(xlist[1]) - int(xlist[0])
 
 
@@ -271,30 +271,28 @@ for n in range(list_size):
 		plt.show()
 		'''
 
-		def fGs(x,s1,t1,a,b,s2,s3,t3,c):
+		def fGs(x,s1,t1,a,b,s2):
 			return (fG(x,7155*s1,7155*t1,a)+fG(x,7172*s1,7172*t1,0.24*a)+fG(x,7388*s1,7388*t1,0.19*a)+fG(x,7453*s1,7453*t1,0.31*a)
-				+fG(x,7378*s2,7378*t1,b)+fG(x,7412*s2,7412*t1,0.31*b) 
-				+ fG(x,6855*s3,6855*t3,c) 
+				+fG(x,7378*s2,7378*t1,b)+fG(x,7412*s2,7412*t1,0.31*b)  
 				+ (y0 - y1) / (x0-x1) * (x - x0) + y0)
 
 		params,params_covariance=optimize.curve_fit(fGs,fit_xlist,fit_ylist,guess,maxfev=500000,bounds=bound)
 
 		print(params)
 
-		chi2 = np.sum((fGs(fit_xlist,params[0],params[1],params[2],params[3],params[4],params[5],params[6],params[7]) - fit_ylist)**2)/np.size(fit_xlist)
+		chi2 = np.sum((fGs(fit_xlist,params[0],params[1],params[2],params[3],params[4]) - fit_ylist)**2)/np.size(fit_xlist)
 
 		print('chi2: %f' %chi2)
 
 
 		y7 = (y0 - y1) / (x0-x1) * (cut_xlist - x0) + y0
-		ysimu = fGs(cut_xlist,params[0],params[1],params[2],params[3],params[4],params[5],params[6],params[7]) - y7
+		ysimu = fGs(cut_xlist,params[0],params[1],params[2],params[3],params[4]) - y7
 		y1 = fG(cut_xlist,7155*params[0],7155*params[1],params[2])
 		y2 = fG(cut_xlist,7172*params[0],7172*params[1],0.24*params[2])
 		y3 = fG(cut_xlist,7388*params[0],7388*params[1],0.19*params[2])
 		y4 = fG(cut_xlist,7453*params[0],7453*params[1],0.31*params[2])
 		y5 = fG(cut_xlist,7378*params[4],7378*params[1],params[3])
 		y6 = fG(cut_xlist,7412*params[4],7412*params[1],0.31*params[3])
-		y8 = fG(cut_xlist,6855*params[5],6855*params[6],params[7])
 
 		'''
 		plt.title('%s at phase %s d' %(target_name, phase))
@@ -357,15 +355,12 @@ for n in range(list_size):
  
 		FWHM_Fe = params[0] * 2 * 300000 * np.sqrt(2*np.log(2))
 		FWHM_Ni = params[4] * 2 * 300000 * np.sqrt(2*np.log(2))
-		FWHM_Co = params[5] * 2 * 300000 * np.sqrt(2*np.log(2))
 		vshift_Fe = (params[1] - 1) * 300000 
 		vshift_Ni = (params[1] - 1) * 300000
-		vshift_Co = (params[6] - 1) * 300000
 		flux_ratio = params[3] * params[4] * 7378 / params[2] / params[0] / 7155
 		high_ratio = params[3] / params[2]
 
 		print('FWHM_Fe: %f, FWHM_Ni: %f, vshift_Fe: %f, vshift_Ni: %f, flux_ratio Ni/Fe: %f, high_ratio Ni/Fe: %s' % (FWHM_Fe,FWHM_Ni, vshift_Fe, vshift_Ni, flux_ratio, high_ratio))
-		print('FWHM_Co: %d, vshift_Co: %d' %(FWHM_Co, vshift_Co))
 
 		def f1(x):
 			return params[3] * params[4] / params[2] / params[0] / 4.9 /np.exp(0.28*1.60217662/1.380694/10**(-4)/x)
@@ -397,7 +392,6 @@ for n in range(list_size):
 		plt.plot(cut_xlist, y4+y7, color="purple",linestyle='--')
 		plt.plot(cut_xlist, y5+y7, color="green", label="[Ni II]",linestyle='--')
 		plt.plot(cut_xlist, y6+y7, color="green",linestyle='--')
-		plt.plot(cut_xlist, y8+y7, color="pink",label="[Co III]",linestyle='--')
 		plt.plot(cut_xlist[0:(pos[1] - pos[0]+1)], np.ones(pos[1]-pos[0]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b', label = 'fit region')
 		plt.plot(cut_xlist[(pos[2] - pos[0]):(pos[3] - pos[0]+1)], np.ones(pos[3]-pos[2]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
 		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
