@@ -4,9 +4,16 @@ import matplotlib.collections as collections
 import scipy.signal as signal
 from extinction import fitzpatrick99
 from scipy.optimize import curve_fit
+from scipy import stats
 
 
-
+def Append(l1, l2):
+	l3 = []
+	for item in l1:
+		l3.append(item)
+	for item in l2:
+		l3.append(item)
+	return l3
 
 def rdata(filename, start):
 	with open(filename,'r') as f:
@@ -191,7 +198,6 @@ plt.colorbar(label = 'phase since maximum')
 plt.show()
 '''
 name1, phase1, delta1, Udelta1, vSi1, UvSi1, ratio1, vFe1, vNi1, wFe1, wNi1, r_flux1, subc, number1 = rdata('result_data0_IMG.dat',1)
-print(name1)
 name1.append('tail')
 UvFe1, UvNi1, UwFe1, UwNi1, U_r_flux1, edge_blue, edge_red = rU('Uncertenty_IMG.dat',1)
 
@@ -202,12 +208,14 @@ def Fe56(t, Ni, Co, lambda_Ni, lambda_Co):
 
 
 def get_quene(array):
+	qlist = []
+	plist = []
 	size = np.size(array)
 	if size < 2:
-		print('size < 2')
-		return 0
+		qlist.append(0)
+		plist.append(0)
+		return qlist, plist
 	array_sort = np.sort(array)
-	qlist = []
 	for i in range(size):
 		for j in range(size):
 			if array[i] == array_sort[j]:
@@ -219,7 +227,6 @@ def get_quene(array):
 			if qlist[i] == qlist[j]:
 				qlist[j] += n
 				n += 1
-	plist = []
 	for i in range(size):
 		for j in range(size):
 			if i == qlist[j]:
@@ -590,30 +597,29 @@ plt.plot(np.linspace(0,np.max(ratio),10), np.linspace(0,np.max(ratio),10), c = '
 plt.scatter(0.05, 0.05, label = '$\\rm M_{Ni}/M_{Fe}$', alpha = 0)
 plt.legend(loc = 'upper left', frameon=False)
 plt.show()
-
+'''
 jlist=[]
 head = 0
-n = 0
+for i in range(1,number1):
+	if name1[head] != name1[i]:
+		jlist.append(i-1)
+		head = i
+jlist.append(number1-1)
+'''
+jlist=[]
+head = 0
 for i in range(1,number1+1):
 	if name1[head] != name1[i]:
-		if head + 1 != i:
-			for j in range(head, i, 1):
-				
-				d_to_300_first = np.abs(phase1[j]-300)
-				d_to_300_second = np.abs(phase1[j+1]-300)
-				if d_to_300_first >= d_to_300_second:
-					if j + 2 == i:
-						head = j + 1
-						break
-				else:
-					head = j
-					break
-				
-		jlist.append(head)
+		'''
+		if phase1[i-1] < 300:
+			head = i
+			continue
+		'''
+		phase_dif_tempt = np.abs(np.array(phase1[head:i]) - 300)
+		qlist, plist = get_quene(phase_dif_tempt)
+		jlist.append(head+plist[0])
 		head = i
-		n += 1
-print(np.size(jlist))
-print(jlist)
+
 
 print()
 g_vSi = []
@@ -707,28 +713,70 @@ def f_line(x,a,b):
 	return a*x + b
 
 params_b, params_covariance_b = curve_fit(f_line, b_vSi, b_ratio, [1,0])
+tau_b, p_value_b = stats.kendalltau(b_vSi,b_ratio)
+print('tau_b, p_value_b: ',tau_b, p_value_b)
 params_r, params_covariance_r = curve_fit(f_line, r_vSi, r_ratio, [1,0])
+tau_r, p_value_r = stats.kendalltau(r_vSi,r_ratio)
+print('tau_r, p_value_r: ',tau_r, p_value_r)
 
-fig, ax = plt.subplots()
-ax.fill_between(np.linspace(8,17,2), np.ones(2)*double_sub, np.ones(2)*double_sup, alpha=0.5, color = 'gray')
-ax.fill_between(np.linspace(8,17,2), np.ones(2)*ratio_n3, np.ones(2)*ratio_n20, alpha=0.5, color = 'yellow')
-plt.xlabel('Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
-plt.ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
+    # definitions for the axes
+left, width = 0.1, 0.55
+bottom, height = 0.1, 0.55
+spacing = 0.015
+
+
+rect_scatter = [left, bottom + 0.2 + spacing, width, height]
+rect_histx = [left, bottom, width, 0.2]
+rect_histy = [left + width + spacing, bottom + 0.2 + spacing, 0.2, height]
+
+# start with a square Figure
+fig = plt.figure(figsize=(6, 6))
+
+ax = fig.add_axes(rect_scatter)
+ax.tick_params(axis="x", labelbottom=False)
+ax.set_ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
+ax.set_xlim([9,17])
+ax.set_ylim([0,0.14])
+ax_histx = fig.add_axes(rect_histx, sharex=ax)
+ax_histy = fig.add_axes(rect_histy, sharey=ax)
+
+# no labels
+ax_histx.set_xlabel('Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
+ax_histx.set_ylabel('Number')
+ax_histy.tick_params(axis="y", labelleft=False)
+ax_histy.set_xlabel('Number')
+
+# the scatter plot:
 for i in range(np.size(g_vSi)):
-	plt.errorbar(g_vSi[i],g_ratio[i],xerr = Ug_vSi[i],yerr = Ug_ratio[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
+	if i == 0:
+		ax.scatter(g_vSi[i],g_ratio[i], c = 'gray', marker = 'o', label = 'Zero')
+	ax.errorbar(g_vSi[i],g_ratio[i],xerr = Ug_vSi[i],yerr = Ug_ratio[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(b_vSi)):
-	plt.errorbar(b_vSi[i],b_ratio[i],xerr = Ub_vSi[i],yerr = Ub_ratio[i], c = 'b', capsize = 3, linestyle = '-', marker = 'o')
+	if i == 0:
+		ax.scatter(b_vSi[i],b_ratio[i], c = 'b', marker = 'o', label = 'Blue-shifted')
+	ax.errorbar(b_vSi[i],b_ratio[i],xerr = Ub_vSi[i],yerr = Ub_ratio[i], c = 'b', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(r_vSi)):
-	plt.errorbar(r_vSi[i],r_ratio[i],xerr = Ur_vSi[i],yerr = Ur_ratio[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
-plt.plot(np.linspace(9,13,10), f_line(np.linspace(9,13,10), params_b[0], params_b[1]), c = 'b', linestyle = '--')
-plt.plot(np.linspace(9,17,10), f_line(np.linspace(9,17,10), params_r[0], params_r[1]), c = 'r', linestyle = '--')
-ax.text(14,0.02,'sub-M$_{ch}$ Double Det.')
-ax.text(15,0.09,'M$_{ch}$ Del. Det.')
+	if i == 0:
+		ax.scatter(r_vSi[i],r_ratio[i], c = 'r', marker = 'o', label = 'Red-shifted')
+	ax.errorbar(r_vSi[i],r_ratio[i],xerr = Ur_vSi[i],yerr = Ur_ratio[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
+ax.plot(np.linspace(9,13,10), f_line(np.linspace(9,13,10), params_b[0], params_b[1]), c = 'b', linestyle = '--')
+ax.plot(np.linspace(9,17,10), f_line(np.linspace(9,17,10), params_r[0], params_r[1]), c = 'r', linestyle = '--')
+
+# now determine nice limits by hand:
+x_bins = [9,10,11,12,13,14,15,16,17]
+y_bins = [0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10,1.1]
+ax_histx.hist(r_vSi, bins=x_bins, color='r', label = 'Red-shifted')
+ax_histx.hist(b_vSi, bins=x_bins, edgecolor='b', histtype='step', label = 'Blue-shifted')
+ax_histx.legend()
+ax_histy.set_xlim([0,8])
+ax_histy.hist(r_ratio, bins=y_bins, orientation='horizontal', color='r', label = 'Red-shifted')
+ax_histy.hist(b_ratio, bins=y_bins, orientation='horizontal', edgecolor='b', histtype='step', label = 'Blue-shifted')
+ax_histy.legend()
+
+ax.legend()
 plt.show()
 
-
-
-plt.xlabel('Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
+plt.xlabel('$Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
 plt.ylabel('$Nebular Velocity [$\\rm \\ km\\ s^{-1}$]')
 for i in range(np.size(g_vSi)):
 	plt.errorbar(g_vSi[i],g_vN[i],xerr = Ug_vSi[i],yerr = Ug_vN[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
@@ -758,6 +806,23 @@ for i in range(np.size(r_vSi)):
 	plt.errorbar(r_vN[i],r_delta[i],xerr = Ur_vN[i],yerr = Ur_delta[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.show()
 
+def Append(l1, l2):
+	l3 = []
+	for item in l1:
+		l3.append(item)
+	for item in l2:
+		l3.append(item)
+	return l3
+
+delta_tau = np.array(Append(r_delta,b_delta))
+ratio_tau = np.array(Append(r_ratio,b_ratio))
+for i in range(np.size(delta_tau)):
+	if delta_tau[i] > 1.7:
+		np.delete(delta_tau, i)
+		np.delete(ratio_tau, i)
+tau, p_value = stats.kendalltau(delta_tau, ratio_tau)
+print('tau, p_value: ',tau, p_value)
+
 fig, ax = plt.subplots()
 ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*double_sub, np.ones(2)*double_sup, alpha=0.5, color = 'gray')
 ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*ratio_n3, np.ones(2)*ratio_n20, alpha=0.5, color = 'yellow')
@@ -778,7 +843,7 @@ plt.show()
 for i in range(np.size(jlist)):
 	plt.scatter(delta1[jlist[i]], vSi1[jlist[i]])
 plt.show()
-
+'''
 vSit = []
 UvSit = []
 ratiot = []
@@ -814,7 +879,7 @@ for i in range(np.size(jlist)):
 		print(ratiot[i])
 plt.show()
 
-'''
+
 plt.xlabel('Improved Multi-Gaussian')
 plt.ylabel('Multi-Gaussian')
 jlist=[]

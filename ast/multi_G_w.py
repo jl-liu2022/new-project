@@ -81,7 +81,7 @@ for n in range(list_size):
 			k += 1
 		target_name = NameList[n][0:(k+1)] + ' ' + NameList[n][(k+1):]
 
-	with open('/Users/pro/python/spectra_data/paper/' + filename,'r') as f:
+	with open('paper/' + filename,'r') as f:
 		line = f.readline()
 		a = line.split()
 		phase = int(a[1])
