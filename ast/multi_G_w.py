@@ -6,6 +6,7 @@ import scipy.integrate as itg
 import scipy.signal as signal
 import matplotlib.collections as collections
 from extinction import fitzpatrick99 
+from tqdm import tqdm
 
 def Append(l1, l2):
 	l3 = []
@@ -146,7 +147,7 @@ for n in range(list_size):
 	def fG(x, sigma, mu, A):
 		return A*np.exp(-(x-mu)**2/2/sigma**2)
 	
-	plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
+	'''
 	fig, ax = plt.subplots()
 	ax.set_title('%s + %sd' %(target_name, phase))
 	ax.set_xlabel('Wavelength [Å]')
@@ -169,7 +170,7 @@ for n in range(list_size):
 	ax.text(4300,1.23,'[Fe III]')
 
 	plt.show()
-	
+	'''	
 	if initialize:
 		Min1 = 6800
 		Max1 = 7000
@@ -191,8 +192,9 @@ for n in range(list_size):
 		Max4 = int(Max4List[n])
 		width = int(WidthList[n])
 
-	xlist = xlist / (1+redshift)
 	ylist = ylist*np.power(10,fitzpatrick99(xlist,R_V*E_B_V,R_V)/2.5)
+	xlist = xlist / (1+redshift)
+	
 
 	
 
@@ -395,6 +397,7 @@ for n in range(list_size):
 		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
 		plt.plot(cut_xlist, y7, color="y",   label="continuum")
 		plt.legend(loc='upper right')
+		plt.savefig('./tempt_figure.pdf')
 		plt.show()
 		'''
 		plt.savefig('./appendix/'+FigureName)
@@ -441,7 +444,7 @@ for n in range(list_size):
 				save_as = '_IMG.dat'
 			else:
 				save_as = '_IMG.dat'
-			with open('/Users/pro/python/ast/result_data0'+save_as,'a') as f:
+			with open('result_data0'+save_as,'a') as f:
 				f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(target_name, phase, delta15, U_delta15, redshift, E_B_V, vSi, U_vSi, ratio_ave_bef * 1.8, vshift_Fe, vshift_Ni, FWHM_Fe, FWHM_Ni, flux_ratio))
 				g = 1
 				break
@@ -523,13 +526,14 @@ for n in range(list_size):
 		FWHM_Ni = [FWHM_Ni]
 		flux_ratio = [flux_ratio]
 		high_ratio = [high_ratio]
-		k = 0
+
 		if initialize:
 			edge_size = int(input('edge_size: '))
 		else:	
 			edge_size = float(ESList[n])
+		k=0
 		while(k < 1000):
-			print(k)
+			print(k, end='\r')
 			bluet1 = np.random.rand()*edge_size*2 - edge_size + Min1
 			if (Min2 - Max1) >= 20:
 				redt1 = np.random.rand()*20 - 10 + Max1
@@ -642,7 +646,7 @@ for n in range(list_size):
 		U_high_ratio = np.sqrt(Up_high_ratio**2 + Ue_high_ratio**2)
 		print('Up_FWHM_Fe: %s, Up_vshift_Fe: %s, Up_FWHM_Ni: %s, Up_vshift_Ni: %s, Up_flux_ratio: %s, Up_high_ratio: %s' %(Up_FWHM_Fe, Up_vshift_Fe, Up_FWHM_Ni, Up_vshift_Ni, Up_flux_ratio, Up_high_ratio))
 		print('U_FWHM_Fe: %s, U_vshift_Fe: %s, U_FWHM_Ni: %s, U_vshift_Ni: %s, U_flux_ratio: %s, U_high_ratio: %s' %(U_FWHM_Fe, U_vshift_Fe, U_FWHM_Ni, U_vshift_Ni, U_flux_ratio, U_high_ratio))
-		with open('/Users/pro/python/ast/Uncertenty'+save_as,'a') as f:
+		with open('Uncertenty'+save_as,'a') as f:
 			f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(target_name, phase, U_vshift_Fe, U_vshift_Ni, U_FWHM_Fe, U_FWHM_Ni, U_flux_ratio, Min1, Max1, Min2, Max2, Min3, Max3, Min4, Max4, width, edge_size))
 		g = 0
 		todo_name = input('SN name: ')

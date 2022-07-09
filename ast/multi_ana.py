@@ -245,7 +245,7 @@ spectra_y = []
 n = 0
 for i in range(number1):
 	sepctrum_name = name1[i] + '/' + name1[i] + '_' + str(phase1[i]) +'.dat'
-	with open('/Users/pro/python/spectra_data/paper/' + sepctrum_name,'r') as f:
+	with open('paper/' + sepctrum_name,'r') as f:
 		line = f.readline()
 		a = line.split()
 		phase = int(a[1])
@@ -527,7 +527,7 @@ Ni_58_List = []
 Ni_56_List = []
 Co_56_list = []
 for item in ModelNameList:
-	with open('/Users/pro/python/ast/models/ddt_2013_' + item + '_abundances.dat','r') as f:
+	with open('models/ddt_2013_' + item + '_abundances.dat','r') as f:
 		line = f.readline()
 		while line:
 			if line == '\n':
@@ -713,6 +713,9 @@ def f_line(x,a,b):
 	return a*x + b
 
 params_b, params_covariance_b = curve_fit(f_line, b_vSi, b_ratio, [1,0])
+
+def kendalltau_err(x, y, xerr, yerr):
+	
 tau_b, p_value_b = stats.kendalltau(b_vSi,b_ratio)
 print('tau_b, p_value_b: ',tau_b, p_value_b)
 params_r, params_covariance_r = curve_fit(f_line, r_vSi, r_ratio, [1,0])
@@ -806,16 +809,11 @@ for i in range(np.size(r_vSi)):
 	plt.errorbar(r_vN[i],r_delta[i],xerr = Ur_vN[i],yerr = Ur_delta[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.show()
 
-def Append(l1, l2):
-	l3 = []
-	for item in l1:
-		l3.append(item)
-	for item in l2:
-		l3.append(item)
-	return l3
 
 delta_tau = np.array(Append(r_delta,b_delta))
+delta_tau = np.array(Append(delta_tau,g_delta))
 ratio_tau = np.array(Append(r_ratio,b_ratio))
+ratio_tau = np.array(Append(ratio_tau,g_ratio))
 for i in range(np.size(delta_tau)):
 	if delta_tau[i] > 1.7:
 		np.delete(delta_tau, i)
