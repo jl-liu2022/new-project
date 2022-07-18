@@ -713,16 +713,33 @@ def f_line(x,a,b):
 	return a*x + b
 
 params_b, params_covariance_b = curve_fit(f_line, b_vSi, b_ratio, [1,0])
+params_r, params_covariance_r = curve_fit(f_line, r_vSi, r_ratio, [1,0])
 
 def kendalltau_err(x, y, xerr, yerr):
-	
+	N = 20000
+	tau = []
+	p = []
+	for i in range(N):
+		x_t = x + np.random.normal(scale=xerr)
+		y_t = y + np.random.normal(scale=yerr)
+		tau_t, p_t = stats.kendalltau(x_t, y_t)
+		tau.append(tau_t)
+		p.append(p_t)
+	return np.percentile(tau, [16, 50, 84]), np.percentile(p, [16, 50, 84])
+
+tau_result_b, p_result_b = kendalltau_err(b_vSi,b_ratio, Ub_vSi, Ub_ratio)
+print(tau_result_b)
+print(p_result_b)
 tau_b, p_value_b = stats.kendalltau(b_vSi,b_ratio)
 print('tau_b, p_value_b: ',tau_b, p_value_b)
-params_r, params_covariance_r = curve_fit(f_line, r_vSi, r_ratio, [1,0])
+
+tau_result_r, p_result_r = kendalltau_err(r_vSi,r_ratio, Ur_vSi, Ur_ratio)
+print(tau_result_r)
+print(p_result_r)
 tau_r, p_value_r = stats.kendalltau(r_vSi,r_ratio)
 print('tau_r, p_value_r: ',tau_r, p_value_r)
 
-    # definitions for the axes
+# definitions for the axes
 left, width = 0.1, 0.55
 bottom, height = 0.1, 0.55
 spacing = 0.015
