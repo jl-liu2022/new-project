@@ -237,7 +237,7 @@ def get_quene(array):
 qlist, plist = get_quene(delta1)
 
 fig, ax = plt.subplots()
-ax.set_xlabel('Wavelength [Å]')
+ax.set_xlabel('Wavelength [$\\rm \\AA$]')
 ax.set_ylabel('Scaled Flux + constant')
 ax.set_yticks([])
 spectra_x = []
@@ -303,21 +303,17 @@ for i in range(number1):
 		plt.scatter(10000,0,alpha=0)
 		n += 1
 	'''
-	if name1[i] == 'SN2021hpr':
+	if name1[i] == 'SN2021hpr' or name1[i] == 'SN2021wuf' or name1[i] == 'SN2019np' or name1[i] == 'SN2019ein':
 		Min1 = 4000
-		Max1 = 9000
 		pos = [0,np.size(xlist)-1]
 		indicator = 0
 		for j in range(length):
 			if int(xlist[j]) >= Min1 and indicator == 0:
 				pos[0] = j
 				indicator = 1
-			elif int(xlist[j]) >= Max1 and indicator == 1:
-				pos[1] = j
-				break
-		scale_max = np.max(ylist[pos[0]: pos[1]])
-		plt.plot(xlist, ylist/scale_max+1*n)
-		plt.text(xlist[-1], ylist[-1]/scale_max+1*n, name1[i] + ', +%s d' %phase1[i])
+		scale_max = np.max(ylist[pos[0]:])
+		plt.plot(xlist[pos[0]:], ylist[pos[0]:]/scale_max+2*n, c = 'black')
+		plt.text(8000, ylist[-1]/scale_max+2*n+0.6, name1[i] + ', +%s d' %phase1[i])
 		n += 1
 	Min1 = 6600
 	Max1 = 8000
@@ -338,11 +334,10 @@ for i in range(number1):
 	spectra_x.append(xlist[pos[0]:(pos[1]+1)])
 	spectra_y.append(ylist[pos[0]:(pos[1]+1)]+0.01*qlist[i])
 
-plt.scatter(12000,0,alpha=0)
 plt.show()
 
 fig, ax = plt.subplots()
-ax.set_xlabel('Wavelength [Å]')
+ax.set_xlabel('Wavelength [$\\rm \\AA$]')
 ax.set_ylabel('Scaled Flux + constant')
 ax.set_yticks([])
 i = 0
@@ -560,6 +555,8 @@ ax.set_ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
 
 ax.fill_between(day_list, np.ones_like(day_list)*double_sub, np.ones_like(day_list)*double_sup, alpha=0.5, color = 'gray')
 ax.fill_between(day_list, np.ones_like(day_list)*ratio_n3, np.ones_like(day_list)*ratio_n20, alpha=0.5, color = 'yellow')
+print(ratio_n3)
+print(ratio_n20)
 line = []
 head = 0
 n = 0
@@ -578,8 +575,8 @@ for i in range(1,number1+1):
 l1 = ax.legend(handles=line[0:int(n/2)], loc = 'upper left')
 ax.legend(handles=line[int(n/2):], loc = 'upper right')
 plt.gca().add_artist(l1)
-ax.text(150,0.02,'sub-M$_{ch}$ Double Det.')
-ax.text(150,0.07,'M$_{ch}$ Del. Det.')
+ax.text(150,0.02,'sub-M$_{Ch}$ Double Det.')
+ax.text(150,0.07,'M$_{Ch}$ Del. Det.')
 plt.show()
 
 
@@ -591,13 +588,14 @@ for i in range(N):
 			plt.errorbar(ratio1[j], ratio[i], xerr = U_ratio1[j], yerr = Uratio[i], capsize = 3, linestyle = '-', marker = 'o', c = 'b')
 			j0 = j+1
 			break
+'''
 plt.xlabel('This work')
 plt.ylabel('Flor')
 plt.plot(np.linspace(0,np.max(ratio),10), np.linspace(0,np.max(ratio),10), c = 'grey', linestyle = '--')
 plt.scatter(0.05, 0.05, label = '$\\rm M_{Ni}/M_{Fe}$', alpha = 0)
 plt.legend(loc = 'upper left', frameon=False)
 plt.show()
-'''
+
 jlist=[]
 head = 0
 for i in range(1,number1):
@@ -606,15 +604,32 @@ for i in range(1,number1):
 		head = i
 jlist.append(number1-1)
 '''
+jlist = []
+head = 0
+for i in range(1, number1+1):
+	if name1[head] != name1[i]:
+		jlist.append(i-1)
+		head = i
+
+no_C = 0
+no_subC = 0
+no_critical = 0
+for i in range(np.size(jlist)):
+	if ratio1[jlist[i]] < 0.06:
+		no_subC += 1
+	elif ratio1[jlist[i]] > 0.064:
+		no_C += 1
+	else:
+		no_critical += 1
+
+print('C: %d' %no_C)
+print('subC: %d' %no_subC)
+print('critical: %d' %no_critical)
+
 jlist=[]
 head = 0
 for i in range(1,number1+1):
 	if name1[head] != name1[i]:
-		'''
-		if phase1[i-1] < 300:
-			head = i
-			continue
-		'''
 		phase_dif_tempt = np.abs(np.array(phase1[head:i]) - 300)
 		qlist, plist = get_quene(phase_dif_tempt)
 		jlist.append(head+plist[0])
@@ -694,20 +709,7 @@ print('blue: %d' %np.size(b_vSi))
 print('red: %d' %np.size(r_vSi))
 print('gray: %d' %np.size(g_vSi))
 
-no_C = 0
-no_subC = 0
-no_critical = 0
-for i in range(np.size(jlist)):
-	if ratio1[jlist[i]] < 0.06:
-		no_subC += 1
-	elif ratio1[jlist[i]] > 0.064:
-		no_C += 1
-	else:
-		no_critical += 1
 
-print('C: %d' %no_C)
-print('subC: %d' %no_subC)
-print('critical: %d' %no_critical)
 
 def f_line(x,a,b):
 	return a*x + b
@@ -716,7 +718,7 @@ params_b, params_covariance_b = curve_fit(f_line, b_vSi, b_ratio, [1,0])
 params_r, params_covariance_r = curve_fit(f_line, r_vSi, r_ratio, [1,0])
 
 def kendalltau_err(x, y, xerr, yerr):
-	N = 20000
+	N = 20001
 	tau = []
 	p = []
 	for i in range(N):
@@ -727,6 +729,20 @@ def kendalltau_err(x, y, xerr, yerr):
 		p.append(p_t)
 	return np.percentile(tau, [16, 50, 84]), np.percentile(p, [16, 50, 84])
 
+def pearson_err(x,y,xerr,yerr):
+	N = 20001
+	r = []
+	p = []
+	for i in range(N):
+		x_t = x + np.random.normal(scale=xerr)
+		y_t = y + np.random.normal(scale=yerr)
+		res = stats.pearsonr(x_t, y_t)
+		r_t = res[0]
+		p_t = res[1]
+		r.append(r_t)
+		p.append(p_t)
+	return np.percentile(r, [16, 50, 84]), np.percentile(p, [16, 50, 84])
+'''
 tau_result_b, p_result_b = kendalltau_err(b_vSi,b_ratio, Ub_vSi, Ub_ratio)
 print(tau_result_b)
 print(p_result_b)
@@ -739,6 +755,15 @@ print(p_result_r)
 tau_r, p_value_r = stats.kendalltau(r_vSi,r_ratio)
 print('tau_r, p_value_r: ',tau_r, p_value_r)
 
+pearson_r_blue, pearson_p_blue = pearson_err(b_vSi,b_ratio, Ub_vSi, Ub_ratio)
+pearson_r_red,  pearson_p_red  = pearson_err(r_vSi,r_ratio, Ur_vSi, Ur_ratio)
+print(stats.pearsonr(b_vSi, b_ratio))
+print(pearson_r_blue)
+print(pearson_p_blue)
+print(stats.pearsonr(r_vSi, r_ratio))
+print(pearson_r_red)
+print(pearson_p_red)
+'''
 # definitions for the axes
 left, width = 0.1, 0.55
 bottom, height = 0.1, 0.55
@@ -826,18 +851,25 @@ for i in range(np.size(r_vSi)):
 	plt.errorbar(r_vN[i],r_delta[i],xerr = Ur_vN[i],yerr = Ur_delta[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.show()
 
-
+'''
 delta_tau = np.array(Append(r_delta,b_delta))
 delta_tau = np.array(Append(delta_tau,g_delta))
+Udelta_tau = np.array(Append(Ur_delta, Ub_delta))
+Udelta_tau = np.array(Append(Udelta_tau, Ug_delta))
 ratio_tau = np.array(Append(r_ratio,b_ratio))
 ratio_tau = np.array(Append(ratio_tau,g_ratio))
+Uratio_tau = np.array(Append(Ur_ratio, Ub_ratio))
+Uratio_tau = np.array(Append(Uratio_tau, Ug_ratio))
 for i in range(np.size(delta_tau)):
 	if delta_tau[i] > 1.7:
 		np.delete(delta_tau, i)
 		np.delete(ratio_tau, i)
+tau_result_15, p_result_15 = kendalltau_err(delta_tau,ratio_tau, Udelta_tau, Uratio_tau)
+print(tau_result_15)
+print(p_result_15)
 tau, p_value = stats.kendalltau(delta_tau, ratio_tau)
 print('tau, p_value: ',tau, p_value)
-
+'''
 fig, ax = plt.subplots()
 ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*double_sub, np.ones(2)*double_sup, alpha=0.5, color = 'gray')
 ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*ratio_n3, np.ones(2)*ratio_n20, alpha=0.5, color = 'yellow')
@@ -849,8 +881,8 @@ for i in range(np.size(b_delta)):
 	plt.errorbar(b_delta[i],b_ratio[i],xerr = Ub_delta[i],yerr = Ub_ratio[i], c = 'b', capsize = 3, linestyle = '-', marker = sub_shape[b_subc[i]])
 for i in range(np.size(r_vSi)):
 	plt.errorbar(r_delta[i],r_ratio[i],xerr = Ur_delta[i],yerr = Ur_ratio[i], c = 'r', capsize = 3, linestyle = '-', marker = sub_shape[r_subc[i]])
-ax.text(1.6,0.02,'sub-M$_{ch}$ Double Det.')
-ax.text(1.6,0.07,'M$_{ch}$ Del. Det.')
+ax.text(1.6,0.02,'sub-M$_{Ch}$ Double Det.')
+ax.text(1.6,0.07,'M$_{Ch}$ Del. Det.')
 ax.text(1.75,0.04,'86G', c='b')
 ax.text(1.96,0.0325,'03gs',c='r')
 plt.show()
