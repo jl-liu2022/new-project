@@ -56,9 +56,14 @@ list_name = 'Uncertenty_IMG.dat'
 NameList, PhaseList, Min1List, Max1List, Min2List, Max2List,Min3List, Max3List, Min4List, Max4List, WidthList, ESList = read_list(list_name, 1)
 list_size = np.size(NameList)
 
-todo_name = 'Nothing'
 initialize = False
+todo_name = input('SN name: ')
 for n in range(list_size):
+	if todo_name != NameList[n]:
+		if n != list_size-1:
+			continue
+		else:
+			initialize = True
 	if initialize:
 		phase = input('phase: ')
 		filename = todo_name + '/' + todo_name + '_' + phase +'.dat'
@@ -378,8 +383,8 @@ for n in range(list_size):
 		plt.ylabel('Scaled Flux')
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
-		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
-		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
+		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
+		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
 		plt.plot(cut_xlist, y1+y7, color="purple", label="[Fe II]",linestyle='--')
 		plt.plot(cut_xlist, y2+y7, color="purple",linestyle='--')
 		plt.plot(cut_xlist, y3+y7, color="purple",linestyle='--')
@@ -391,7 +396,7 @@ for n in range(list_size):
 		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
 		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
 		plt.plot(cut_xlist, y7, color="y",   label="continuum")
-		plt.legend()
+		plt.legend(loc='upper right')
 		plt.show()
 		'''
 		plt.savefig('./appendix/'+FigureName)
@@ -432,7 +437,7 @@ for n in range(list_size):
 		plt.legend(loc='upper left')
 		plt.show()
 		'''
-		q = 3
+		q = int(input('input 1 to continue, 2 to save and quit, 3 to quit:'))
 		if q == 2:
 			if (Min2 - Max1) >= 10:
 				save_as = '_IMG.dat'
@@ -444,6 +449,7 @@ for n in range(list_size):
 				break
 		elif q == 3:
 			g = 0
+			todo_name = input('SN name: ')
 			break
 		print(Min1,Max1,Min2,Max2,Min3,Max3,Min4,Max4)
 		print(width)
@@ -642,3 +648,4 @@ for n in range(list_size):
 		with open('Uncertenty'+save_as,'a') as f:
 			f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(target_name, phase, U_vshift_Fe, U_vshift_Ni, U_FWHM_Fe, U_FWHM_Ni, U_flux_ratio, Min1, Max1, Min2, Max2, Min3, Max3, Min4, Max4, width, edge_size))
 		g = 0
+		todo_name = input('SN name: ')

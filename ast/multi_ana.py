@@ -332,7 +332,7 @@ for i in range(number1):
 			break
 	ylist = ylist/np.max(signal.savgol_filter(ylist[pos[0]:(pos[1]+1)],51,1))*0.05 
 	spectra_x.append(xlist[pos[0]:(pos[1]+1)])
-	spectra_y.append(ylist[pos[0]:(pos[1]+1)]+0.01*qlist[i])
+	spectra_y.append(ylist[pos[0]:(pos[1]+1)]+0.02*qlist[i])
 
 plt.show()
 
@@ -341,28 +341,29 @@ ax.set_xlabel('Wavelength [$\\rm \\AA$]')
 ax.set_ylabel('Scaled Flux + constant')
 ax.set_yticks([])
 i = 0
+shift_factor = 0.8
 while(i < number1):
 	if name1[i] == 'SN2011fe':
 		n = i
-		plt.plot(spectra_x[i], spectra_y[i] - 0.1)
+		plt.plot(spectra_x[i], spectra_y[i] - shift_factor)
 		start = np.argmax(np.array(spectra_x[i])>=edge_blue[i])
 		print(start)
 		end = np.argmax(np.array(spectra_x[i])>=edge_red[i])
 		continuum_x = [spectra_x[i][start], spectra_x[i][end]]
-		continuum_y = [spectra_y[i][start]-0.1, spectra_y[i][end]-0.1]
+		continuum_y = [spectra_y[i][start]- shift_factor, spectra_y[i][end]- shift_factor]
 		plt.plot(continuum_x, continuum_y, c='gray', label = 'continuum')
 		size_x = np.size(spectra_x[i])
-		plt.text(spectra_x[i][size_x-1]+50, spectra_y[i][size_x-1] - 0.1, name1[i] + ', +%s d' %phase1[i])
+		plt.text(spectra_x[i][size_x-1]-400, spectra_y[i][size_x-1] - shift_factor + 0.01, name1[i] + ', +%s d' %phase1[i])
 		while(name1[n+1] == 'SN2011fe'):
 			n += 1
-			plt.plot(spectra_x[n], spectra_y[n] - 0.1)
+			plt.plot(spectra_x[n], spectra_y[n] - shift_factor)
 			start = np.argmax(np.array(spectra_x[n])>=edge_blue[n])
 			end = np.argmax(np.array(spectra_x[n])>=edge_red[n])
 			continuum_x = [spectra_x[n][start], spectra_x[n][end]]
-			continuum_y = [spectra_y[n][start]-0.1, spectra_y[n][end]-0.1]
+			continuum_y = [spectra_y[n][start]- shift_factor, spectra_y[n][end]- shift_factor]
 			plt.plot(continuum_x, continuum_y, c='gray')
 			size_x = np.size(spectra_x[n])
-			plt.text(spectra_x[n][size_x-1]+50, spectra_y[n][size_x-1] - 0.1, name1[n] + ', +%s d' %phase1[n])
+			plt.text(spectra_x[n][size_x-1]-400, spectra_y[n][size_x-1] - shift_factor + 0.01, name1[n] + ', +%s d' %phase1[n])
 		i += n-i
 	'''
 	if name1[i] == 'SN2012fr':
@@ -390,11 +391,12 @@ while(i < number1):
 	'''
 	i += 1
 
-plt.plot(8850,0.3,alpha=0)
-collection = collections.BrokenBarHCollection.span_where(np.linspace(6800,7000,100),ymin=0,ymax=0.4,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
+
+collection = collections.BrokenBarHCollection.span_where(np.linspace(6800,7000,100),ymin=0,ymax=0.15,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
 ax.add_collection(collection)
 plt.legend(loc='upper right')
 plt.show()
+exit()
 '''
 cm = plt.cm.get_cmap('viridis')
 for i in range(13):
