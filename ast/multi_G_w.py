@@ -444,7 +444,7 @@ for n in range(list_size):
 			else:
 				save_as = '_IMG.dat'
 			with open('result_data0'+save_as,'a') as f:
-				f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(target_name, phase, delta15, U_delta15, redshift, E_B_V, vSi, U_vSi, ratio_ave_bef * 1.8, vshift_Fe, vshift_Ni, FWHM_Fe, FWHM_Ni, flux_ratio))
+				f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(todo_name, phase, delta15, U_delta15, redshift, E_B_V, vSi, U_vSi, ratio_ave_bef * 1.8, vshift_Fe, vshift_Ni, FWHM_Fe, FWHM_Ni, flux_ratio))
 				g = 1
 				break
 		elif q == 3:
@@ -646,6 +646,6 @@ for n in range(list_size):
 		print('Up_FWHM_Fe: %s, Up_vshift_Fe: %s, Up_FWHM_Ni: %s, Up_vshift_Ni: %s, Up_flux_ratio: %s, Up_high_ratio: %s' %(Up_FWHM_Fe, Up_vshift_Fe, Up_FWHM_Ni, Up_vshift_Ni, Up_flux_ratio, Up_high_ratio))
 		print('U_FWHM_Fe: %s, U_vshift_Fe: %s, U_FWHM_Ni: %s, U_vshift_Ni: %s, U_flux_ratio: %s, U_high_ratio: %s' %(U_FWHM_Fe, U_vshift_Fe, U_FWHM_Ni, U_vshift_Ni, U_flux_ratio, U_high_ratio))
 		with open('Uncertenty'+save_as,'a') as f:
-			f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(target_name, phase, U_vshift_Fe, U_vshift_Ni, U_FWHM_Fe, U_FWHM_Ni, U_flux_ratio, Min1, Max1, Min2, Max2, Min3, Max3, Min4, Max4, width, edge_size))
+			f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(todo_name, phase, U_vshift_Fe, U_vshift_Ni, U_FWHM_Fe, U_FWHM_Ni, U_flux_ratio, Min1, Max1, Min2, Max2, Min3, Max3, Min4, Max4, width, edge_size))
 		g = 0
 		todo_name = input('SN name: ')

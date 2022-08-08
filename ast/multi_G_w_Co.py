@@ -81,7 +81,7 @@ for n in range(list_size):
 			k += 1
 		target_name = NameList[n][0:(k+1)] + ' ' + NameList[n][(k+1):]
 
-	with open('/Users/pro/python/spectra_data/paper/' + filename,'r') as f:
+	with open('paper/' + filename,'r') as f:
 		line = f.readline()
 		a = line.split()
 		phase = int(a[1])
@@ -145,8 +145,7 @@ for n in range(list_size):
 	length = len(xlist)
 	def fG(x, sigma, mu, A):
 		return A*np.exp(-(x-mu)**2/2/sigma**2)
-	
-	plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
+	'''
 	fig, ax = plt.subplots()
 	ax.set_title('%s + %sd' %(target_name, phase))
 	ax.set_xlabel('Wavelength [Å]')
@@ -169,7 +168,7 @@ for n in range(list_size):
 	ax.text(4300,1.23,'[Fe III]')
 
 	plt.show()
-	
+	'''
 	if initialize:
 		Min1 = 6800
 		Max1 = 7000
@@ -378,7 +377,7 @@ for n in range(list_size):
 		'''
 
 		plt.title('%s  +%sd' %(target_name, phase))
-		plt.xlabel('Rest Wavelength [Å]')
+		plt.xlabel('Rest Wavelength [$\\rm \\AA$]')
 		plt.ylabel('Scaled Flux')
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
@@ -439,7 +438,7 @@ for n in range(list_size):
 		q = int(input('input 1 to continue, 2 to save and quit, 3 to quit:'))
 		if q == 2:
 			save_as = 'Co.dat'
-			with open('./result_'+save_as,'a') as f:
+			with open('result_'+save_as,'a') as f:
 				f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(NameList[n], phase, delta15, U_delta15, redshift, E_B_V, vSi, U_vSi, ratio_ave_bef * 1.8, vshift_Fe, vshift_Ni, FWHM_Fe, FWHM_Ni, flux_ratio))
 				g = 1
 				break
@@ -633,7 +632,7 @@ for n in range(list_size):
 		U_high_ratio = np.sqrt(Up_high_ratio**2 + Ue_high_ratio**2)
 		print('Up_FWHM_Fe: %s, Up_vshift_Fe: %s, Up_FWHM_Ni: %s, Up_vshift_Ni: %s, Up_flux_ratio: %s, Up_high_ratio: %s' %(Up_FWHM_Fe, Up_vshift_Fe, Up_FWHM_Ni, Up_vshift_Ni, Up_flux_ratio, Up_high_ratio))
 		print('U_FWHM_Fe: %s, U_vshift_Fe: %s, U_FWHM_Ni: %s, U_vshift_Ni: %s, U_flux_ratio: %s, U_high_ratio: %s' %(U_FWHM_Fe, U_vshift_Fe, U_FWHM_Ni, U_vshift_Ni, U_flux_ratio, U_high_ratio))
-		with open('./Uncertainty_'+ save_as ,'a') as f:
+		with open('Uncertainty_'+ save_as ,'a') as f:
 			f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(NameList[n], phase, U_vshift_Fe, U_vshift_Ni, U_FWHM_Fe, U_FWHM_Ni, U_flux_ratio, Min1, Max1, Min2, Max2, Min3, Max3, Min4, Max4, width, edge_size))
 		g = 0
 		todo_name = input('SN name: ')
