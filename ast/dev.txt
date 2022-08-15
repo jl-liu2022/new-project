@@ -1,32 +1,126 @@
-20220422:
-	Paper:
-		Read 2010Natur_Maeda, improve introduction and discussion Si II
-20220423:
-	Paper:
-		improve discussion Si II
-
-20220424:
-	Paper:
-		connection between Ni/Fe and delta15
-20220425:
-	Paper:
-		connection between Ni/Fe and delta15
-20220426:
-	Grad:
-		Co III
-	Paper:
-		collect data from Valley et al. 2020, 2014bv 2015I 2016gxp 
-		2007on, 2002dj, 2005am x, 2011iv x
-20220427:
-	Paper:
-		collect early observations
-20220428:
-	Paper:
-		only SN 2002dj +273 is added
-20220429:
-	Paper:
-		caution about the Ni/Fe and Si velocity
-		check ebv
 
 
-		
+Japanese:
+	go over and practise
+
+86G 90N_2 90N_3
+
+91bg Fe too wide 86G 03gs (08Q?)
+
+give up the bad fitting spectra? do!
+new data recording file
+
+confine model: the latest one
+
+early Co prominent: 86G 02bo
+
+set up tools: statistic correlation 730 745; histgram ..... done
+
+divide <300 and closet to 250; >300 and closet to 350
+change order of SNe Ia
+
+part-time:
+	Function of BBB 1,2
+	Formation of BBB 3
+	Method of BBB 4-14
+
+	BBB:
+		function: 
+			protect brain from toxins and pathogens; matintains homeostasis and proper function of CNS
+		formation: 
+			CNs ECs:
+				function: 
+					express specialzied tight junctions -> small molecules
+					lack fenestrae and exhibit a low rate of transcytosis -> large molecules
+					express transporters -> essential nutrients
+	Wnt/beta-catenin signaling pathway:
+		function:
+			key regulator of BBB development and maintenance.
+		component:
+			multiprotein receptor complexes:
+				Frizzled4, LRP6...:
+					position: 
+						brain ECs
+					ligands:
+						Wnt7a,7b and Norrin
+					function:
+						receptor activation -> TCF and LEF1 transcription factors:
+							function:
+								control expression of a BBB-specific gene expression repertoire(???)
+							method:
+								inducing tight junction, solute transporter and efflux transporter expression, and by repressing expression of the permeability protein PLVAP that forms the diaphragm in EC fenestrae, caveolae and transcytotic vesicles
+	Unc5B:
+		background:
+			among the four vertebrate Unc5 family members, only Unc5B is expressed in ECs in mice and humans.
+		component:
+			ECD(???):
+				Netrin-1
+				Robo4
+				Flrt2
+			ICD:
+				membrane-proximal ZU5 domain
+				UPA domain
+				death domain
+		function:
+			mediated:
+				ICD, mediate apoptosis in the absence of ligand
+		method:
+			domain -> supramodule:
+				suppress Unc5B: ZU5 binds to both UPA and DD
+				activate Unc5B: ligands binding to Unc5B triggers a conformational change
+
+table   1 sigma
+        vSi-ratio delta15-ratio
+N
+tau
+pvalue
+
+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
+
+20220810
+
+update figures ok
+paper construction ok
+polish paper ok
+artis makeup learning ok input, output
+
+how to talk a good story?
+what I want to clear? most -> subC but be carefule; Si velocity diversity; brighter -> subC confused; difference between 91bg and other;
+what I have? ratio_phase; ratio vs. Si; ratio vs. 15;
+
+20220811
+
+polish paper ok
+polish figure ok
+
+20220812
+
+acknowledgement:
+	database acknowledgement
+
+Appendix:
+	Table ok
+	Figure ok
+
+Artis:
+	input ok
+
+20220813
+
+c++:
+	'__' ?
+
+
+A Great Goal--Artis:
+	paper method:
+		"make everything clear"
+		atomic parameters
+		estimator
+		NLTE
+		non-thermal
+	code realization
+
+
+
+
+

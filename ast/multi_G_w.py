@@ -149,9 +149,10 @@ for n in range(list_size):
 	
 	'''
 	fig, ax = plt.subplots()
-	ax.set_title('%s + %sd' %(target_name, phase))
-	ax.set_xlabel('Wavelength [Å]')
-	ax.set_ylabel('Scaled Flux')
+	plt.tick_params(labelsize=15)
+	ax.set_title('%s + %sd' %(target_name, phase), fontsize=15)
+	ax.set_xlabel('Wavelength [$\\rm \\AA$]',fontsize=15)
+	ax.set_ylabel('Scaled Flux',fontsize=15)
 	ax.set_yticks([])
 	ax.plot(xlist,ylist,color = 'b')
 	
@@ -170,7 +171,7 @@ for n in range(list_size):
 	ax.text(4300,1.23,'[Fe III]')
 
 	plt.show()
-	'''	
+	'''
 	if initialize:
 		Min1 = 6800
 		Max1 = 7000
@@ -378,13 +379,15 @@ for n in range(list_size):
 		ysimu = y1 + y2 + y3 + y4 + y5 + y6
 		'''
 
-		plt.title('%s  +%sd' %(target_name, phase))
-		plt.xlabel('Rest Wavelength [$\\rm \\AA$]')
-		plt.ylabel('Scaled Flux')
+		fig = plt.figure(figsize=(8,6))
+		plt.title('%s  +%sd' %(target_name, phase), fontsize=15)
+		plt.tick_params(labelsize=15)
+		plt.xlabel('Rest Wavelength [$\\rm \\AA$]',fontsize=15)
+		plt.ylabel('Scaled Flux',fontsize=15)
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
-		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
-		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
+		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
+		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
 		plt.plot(cut_xlist, y1+y7, color="purple", label="[Fe II]",linestyle='--')
 		plt.plot(cut_xlist, y2+y7, color="purple",linestyle='--')
 		plt.plot(cut_xlist, y3+y7, color="purple",linestyle='--')
@@ -396,45 +399,30 @@ for n in range(list_size):
 		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
 		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
 		plt.plot(cut_xlist, y7, color="y",   label="continuum")
-		plt.legend(loc='upper right')
-		plt.show()
-		'''
-		plt.savefig('./appendix/'+FigureName)
-		plt.show(block=False)
-		plt.pause(1)
-		'''
-		plt.close()
-		'''
-		ymin = np.min(ylist[pos[0]:(pos[5]+1)] - y7)
-		plt.title('%s  +%sd' %(target_name, phase))
-		plt.xlabel('Rest Wavelength [Å]')
-		plt.ylabel('Flux Density')
-		plt.yticks([])
-		plt.plot(xlist[pos[0]:(pos[5]+1)], ylist[pos[0]:(pos[5]+1)] - y7, color="blue", label="data")
-		plt.plot(cut_xlist, ysimu, color="red",  label="best fit")
-		plt.plot(cut_xlist, y1, color="purple", label="[Fe II]")
-		plt.plot(cut_xlist, y2, color="purple")
-		plt.plot(cut_xlist, y3, color="purple")
-		plt.plot(cut_xlist, y4, color="purple")
-		plt.plot(cut_xlist, y5, color="green", label="[Ni II]")
-		plt.plot(cut_xlist, y6, color="green")
-		plt.plot(cut_xlist[0:(pos[1] - pos[0]+1)], ymin*np.ones(pos[1]-pos[0]+1), c = 'y', label = 'fit region')
-		plt.plot(cut_xlist[(pos[2] - pos[0]):(pos[3] - pos[0]+1)], ymin*np.ones(pos[3]-pos[2]+1), c = 'y')
-		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], ymin*np.ones(pos[5]-pos[4]+1), c = 'y')
-		plt.legend(loc='upper left')
+		plt.legend()
 		plt.show()
 		
-		plt.plot(cut_xlist, cut_ylist, color="blue", label="obser")
-		plt.plot(cut_xlist, ysimu + y7, color="red",  label="simu")
-		plt.plot(cut_xlist, y1, color="yellow",  label="7155")
-		plt.plot(cut_xlist, y2, color="cyan",  label="7172")
-		plt.plot(cut_xlist, y3, color="magenta",  label="7388")
-		plt.plot(cut_xlist, y4, color="black",  label="7453")
-		plt.plot(cut_xlist, y5, color="green",   label="7378")
-		plt.plot(cut_xlist, y6, color="green",   label="7412")
-
-		plt.plot(cut_xlist, y7, color="green",   label="continuum")
-		plt.legend(loc='upper left')
+		'''
+		fig = plt.figure(figsize=(8,6))
+		plt.title('%s  +%sd' %(target_name, phase), fontsize=15)
+		plt.tick_params(labelsize=15)
+		plt.xlabel('Rest Wavelength [$\\rm \\AA$]',fontsize=15)
+		plt.ylabel('Normalised Flux',fontsize=15)
+		plt.plot(xlist[(pos[0]):(pos[7]+1)], ylist_norm[(pos[0]):(pos[7]+1)]-y7, color="gray", label="data")
+		plt.plot(xlist[(pos[0]):(pos[7]+1)], ylist_t[(pos[0]):(pos[7]+1)]-y7,color='black',label='smoothed data')
+		#plt.plot(cut_xlist, ysimu, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
+		plt.plot(cut_xlist, ysimu, color="red",  label="Gaussian fits")
+		plt.plot(cut_xlist, y1, color="purple", label="[Fe II]",linestyle='--')
+		plt.plot(cut_xlist, y2, color="purple",linestyle='--')
+		plt.plot(cut_xlist, y3, color="purple",linestyle='--')
+		plt.plot(cut_xlist, y4, color="purple",linestyle='--')
+		plt.plot(cut_xlist, y5, color="green", label="[Ni II]",linestyle='--')
+		plt.plot(cut_xlist, y6, color="green",linestyle='--')
+		plt.plot(cut_xlist[0:(pos[1] - pos[0]+1)], np.ones(pos[1]-pos[0]+1)*-0.1, c = 'b', label = 'fit region')
+		plt.plot(cut_xlist[(pos[2] - pos[0]):(pos[3] - pos[0]+1)], np.ones(pos[3]-pos[2]+1)*-0.1, c = 'b')
+		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*-0.1, c = 'b')
+		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*-0.1, c = 'b')
+		plt.legend()
 		plt.show()
 		'''
 		q = int(input('input 1 to continue, 2 to save and quit, 3 to quit:'))

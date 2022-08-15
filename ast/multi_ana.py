@@ -6,7 +6,6 @@ from extinction import fitzpatrick99
 from scipy.optimize import curve_fit
 from scipy import stats
 
-
 def Append(l1, l2):
 	l3 = []
 	for item in l1:
@@ -237,8 +236,9 @@ def get_quene(array):
 qlist, plist = get_quene(delta1)
 
 fig, ax = plt.subplots()
-ax.set_xlabel('Wavelength [$\\rm \\AA$]')
-ax.set_ylabel('Scaled Flux + constant')
+plt.tick_params(labelsize=15)
+ax.set_xlabel('Wavelength [$\\rm \\AA$]', fontsize=15)
+ax.set_ylabel('Scaled Flux + constant', fontsize=15)
 ax.set_yticks([])
 spectra_x = []
 spectra_y = []
@@ -313,7 +313,7 @@ for i in range(number1):
 				indicator = 1
 		scale_max = np.max(ylist[pos[0]:])
 		plt.plot(xlist[pos[0]:], ylist[pos[0]:]/scale_max+2*n, c = 'black')
-		plt.text(8000, ylist[-1]/scale_max+2*n+0.6, name1[i] + ', +%s d' %phase1[i])
+		plt.text(8000, ylist[-1]/scale_max+2*n+0.6, name1[i] + ', +%s d' %phase1[i], size=13)
 		n += 1
 	Min1 = 6600
 	Max1 = 8000
@@ -337,8 +337,9 @@ for i in range(number1):
 plt.show()
 
 fig, ax = plt.subplots()
-ax.set_xlabel('Wavelength [$\\rm \\AA$]')
-ax.set_ylabel('Scaled Flux + constant')
+plt.tick_params(labelsize=15)
+ax.set_xlabel('Wavelength [$\\rm \\AA$]',fontsize=15)
+ax.set_ylabel('Scaled Flux + constant',fontsize=15)
 ax.set_yticks([])
 i = 0
 shift_factor = 0.8
@@ -353,7 +354,7 @@ while(i < number1):
 		continuum_y = [spectra_y[i][start]- shift_factor, spectra_y[i][end]- shift_factor]
 		plt.plot(continuum_x, continuum_y, c='gray', label = 'continuum')
 		size_x = np.size(spectra_x[i])
-		plt.text(spectra_x[i][size_x-1]-400, spectra_y[i][size_x-1] - shift_factor + 0.01, name1[i] + ', +%s d' %phase1[i])
+		plt.text(spectra_x[i][size_x-1]-400, spectra_y[i][size_x-1] - shift_factor + 0.01, name1[i] + ', +%s d' %phase1[i],size=13)
 		while(name1[n+1] == 'SN2011fe'):
 			n += 1
 			plt.plot(spectra_x[n], spectra_y[n] - shift_factor)
@@ -363,7 +364,7 @@ while(i < number1):
 			continuum_y = [spectra_y[n][start]- shift_factor, spectra_y[n][end]- shift_factor]
 			plt.plot(continuum_x, continuum_y, c='gray')
 			size_x = np.size(spectra_x[n])
-			plt.text(spectra_x[n][size_x-1]-400, spectra_y[n][size_x-1] - shift_factor + 0.01, name1[n] + ', +%s d' %phase1[n])
+			plt.text(spectra_x[n][size_x-1]-400, spectra_y[n][size_x-1] - shift_factor + 0.01, name1[n] + ', +%s d' %phase1[n],size=13)
 		i += n-i
 	'''
 	if name1[i] == 'SN2012fr':
@@ -394,9 +395,9 @@ while(i < number1):
 
 collection = collections.BrokenBarHCollection.span_where(np.linspace(6800,7000,100),ymin=0,ymax=0.15,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
 ax.add_collection(collection)
-plt.legend(loc='upper right')
+plt.legend(loc='upper right',fontsize=15)
 plt.show()
-exit()
+
 '''
 cm = plt.cm.get_cmap('viridis')
 for i in range(13):
@@ -490,8 +491,9 @@ plt.show()
 vNebular1 = (np.array(vNi1)+np.array(vFe1))/2
 UvNebular1 = np.sqrt(np.array(UvNi1)**2+np.array(UvFe1)**2)/2
 np.random.seed(399991)
-plt.xlabel('Phase [Days Since Peak Brightness]')
-plt.ylabel('Nebular Velocity[km/s]')
+plt.tick_params(labelsize=15)
+plt.xlabel('Phase [Days Since Peak Brightness]',fontsize=15)
+plt.ylabel('Nebular Velocity[km s$^{-1}$]',fontsize=15)
 plt.plot(np.linspace(150,450,100),np.zeros(100),linestyle='--',c = 'black')
 line = []
 head = 0
@@ -514,7 +516,7 @@ def Fe56(t, Ni, Co, lambda_Ni, lambda_Co):
 
 
 
-day_list = np.linspace(150,450,2)
+day_list = np.linspace(110,450,2)
 
 double_sup = 0.061
 double_sub = 0.015
@@ -552,8 +554,9 @@ for i in range(np.size(ModelNameList)):
 
 np.random.seed(399991)
 fig, ax = plt.subplots()
-ax.set_xlabel('Phase [Days Since Peak Brightness]')
-ax.set_ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
+ax.tick_params(labelsize=15)
+ax.set_xlabel('Phase [Days Since Peak Brightness]',fontsize=15)
+ax.set_ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$',fontsize=15)
 
 ax.fill_between(day_list, np.ones_like(day_list)*double_sub, np.ones_like(day_list)*double_sup, alpha=0.5, color = 'gray')
 ax.fill_between(day_list, np.ones_like(day_list)*ratio_n3, np.ones_like(day_list)*ratio_n20, alpha=0.5, color = 'yellow')
@@ -577,20 +580,21 @@ for i in range(1,number1+1):
 l1 = ax.legend(handles=line[0:int(n/2)], loc = 'upper left')
 ax.legend(handles=line[int(n/2):], loc = 'upper right')
 plt.gca().add_artist(l1)
-ax.text(150,0.02,'sub-M$_{Ch}$ Double Det.')
-ax.text(150,0.07,'M$_{Ch}$ Del. Det.')
+ax.text(110,0.02,'sub-M$_{Ch}$ Double Det.',fontsize=15)
+ax.text(110,0.07,'M$_{Ch}$ Del. Det.',fontsize=15)
 plt.show()
 
 
-
 j0 = 0
+'''
+
 for i in range(N):
 	for j in range(j0, number1, 1):
 		if name[i] == name1[j]:
 			plt.errorbar(ratio1[j], ratio[i], xerr = U_ratio1[j], yerr = Uratio[i], capsize = 3, linestyle = '-', marker = 'o', c = 'b')
 			j0 = j+1
 			break
-'''
+
 plt.xlabel('This work')
 plt.ylabel('Flor')
 plt.plot(np.linspace(0,np.max(ratio),10), np.linspace(0,np.max(ratio),10), c = 'grey', linestyle = '--')
@@ -614,18 +618,24 @@ for i in range(1, number1+1):
 		head = i
 
 no_C = 0
+phase_C =[]
 no_subC = 0
+phase_subC = []
 no_critical = 0
 for i in range(np.size(jlist)):
 	if ratio1[jlist[i]] < 0.06:
 		no_subC += 1
+		phase_subC.append(phase1[jlist[i]])
 	elif ratio1[jlist[i]] > 0.064:
 		no_C += 1
+		phase_C.append(phase1[jlist[i]])
 	else:
 		no_critical += 1
 
 print('C: %d' %no_C)
+print(phase_C)
 print('subC: %d' %no_subC)
+print(phase_subC)
 print('critical: %d' %no_critical)
 
 jlist=[]
@@ -778,20 +788,22 @@ rect_histy = [left + width + spacing, bottom + 0.2 + spacing, 0.2, height]
 
 # start with a square Figure
 fig = plt.figure(figsize=(6, 6))
-
 ax = fig.add_axes(rect_scatter)
+ax.tick_params(labelsize=15)
 ax.tick_params(axis="x", labelbottom=False)
-ax.set_ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
+ax.set_ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$',fontsize=15)
 ax.set_xlim([9,17])
 ax.set_ylim([0,0.14])
 ax_histx = fig.add_axes(rect_histx, sharex=ax)
+ax_histx.tick_params(labelsize=15)
 ax_histy = fig.add_axes(rect_histy, sharey=ax)
+ax_histy.tick_params(labelsize=15)
 
 # no labels
-ax_histx.set_xlabel('Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
-ax_histx.set_ylabel('Number')
+ax_histx.set_xlabel('Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]',fontsize=15)
+ax_histx.set_ylabel('Number',fontsize=15)
 ax_histy.tick_params(axis="y", labelleft=False)
-ax_histy.set_xlabel('Number')
+ax_histy.set_xlabel('Number',fontsize=15)
 
 # the scatter plot:
 for i in range(np.size(g_vSi)):
@@ -814,17 +826,18 @@ x_bins = [9,10,11,12,13,14,15,16,17]
 y_bins = [0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10,1.1]
 ax_histx.hist(r_vSi, bins=x_bins, color='r', label = 'Red-shifted')
 ax_histx.hist(b_vSi, bins=x_bins, edgecolor='b', histtype='step', label = 'Blue-shifted')
-ax_histx.legend()
+ax_histx.legend(fontsize=15)
 ax_histy.set_xlim([0,8])
 ax_histy.hist(r_ratio, bins=y_bins, orientation='horizontal', color='r', label = 'Red-shifted')
 ax_histy.hist(b_ratio, bins=y_bins, orientation='horizontal', edgecolor='b', histtype='step', label = 'Blue-shifted')
-ax_histy.legend()
+ax_histy.legend(fontsize=15)
 
-ax.legend()
+ax.legend(fontsize=15)
 plt.show()
 
-plt.xlabel('$Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]')
-plt.ylabel('$Nebular Velocity [$\\rm \\ km\\ s^{-1}$]')
+plt.tick_params(labelsize=15)
+plt.xlabel('$Si II Velocity Near Peak Brightness [$\\rm 10^3\\ km\\ s^{-1}$]',fontsize=15)
+plt.ylabel('$Nebular Velocity [$\\rm \\ km\\ s^{-1}$]',fontsize=15)
 for i in range(np.size(g_vSi)):
 	plt.errorbar(g_vSi[i],g_vN[i],xerr = Ug_vSi[i],yerr = Ug_vN[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(b_vSi)):
@@ -843,17 +856,24 @@ for i in range(np.size(r_vSi)):
 	plt.errorbar(r_vSi[i],r_delta[i],xerr = Ur_vSi[i],yerr = Ur_delta[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.show()
 '''
-plt.xlabel('Nebular Velocity [$\\rm \\ km\\ s^{-1}$]')
-plt.ylabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]')
+plt.tick_params(labelsize=15)
+plt.xlabel('Nebular Velocity [$\\rm \\ km\\ s^{-1}$]',fontsize=15)
+plt.ylabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]',fontsize=15)
 for i in range(np.size(g_vSi)):
+	if i == 0:
+		ax.scatter(g_vN[i],g_delta[i], c = 'gray', marker = 'o', label = 'Zero')
 	plt.errorbar(g_vN[i],g_delta[i],xerr = Ug_vN[i],yerr = Ug_delta[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(b_vSi)):
+	if i == 0:
+		ax.scatter(b_vN[i],b_delta[i], c = 'blue', marker = 'o', label = 'Blue-shifted')
 	plt.errorbar(b_vN[i],b_delta[i],xerr = Ub_vN[i],yerr = Ub_delta[i], c = 'b', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(r_vSi)):
+	if i == 0:
+		ax.scatter(r_vN[i],r_delta[i], c = 'red', marker = 'o', label = 'Red-shifted')
 	plt.errorbar(r_vN[i],r_delta[i],xerr = Ur_vN[i],yerr = Ur_delta[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.show()
 
-'''
+
 delta_tau = np.array(Append(r_delta,b_delta))
 delta_tau = np.array(Append(delta_tau,g_delta))
 Udelta_tau = np.array(Append(Ur_delta, Ub_delta))
@@ -862,31 +882,50 @@ ratio_tau = np.array(Append(r_ratio,b_ratio))
 ratio_tau = np.array(Append(ratio_tau,g_ratio))
 Uratio_tau = np.array(Append(Ur_ratio, Ub_ratio))
 Uratio_tau = np.array(Append(Uratio_tau, Ug_ratio))
+delete_pos = []
 for i in range(np.size(delta_tau)):
 	if delta_tau[i] > 1.7:
-		np.delete(delta_tau, i)
-		np.delete(ratio_tau, i)
+		delete_pos.append(i)
+delta_tau = np.delete(delta_tau, delete_pos)
+Udelta_tau = np.delete(Udelta_tau, delete_pos)
+ratio_tau = np.delete(ratio_tau, delete_pos)
+Uratio_tau = np.delete(Uratio_tau, delete_pos)
+'''
+pearson_r_15, pearson_p_15 = pearson_err(delta_tau,ratio_tau, Udelta_tau, Uratio_tau)
+print(pearson_r_15, pearson_p_15)
+print(stats.pearsonr(delta_tau, ratio_tau))
+plt.scatter(delta_tau, ratio_tau)
+plt.show()
+
 tau_result_15, p_result_15 = kendalltau_err(delta_tau,ratio_tau, Udelta_tau, Uratio_tau)
 print(tau_result_15)
 print(p_result_15)
 tau, p_value = stats.kendalltau(delta_tau, ratio_tau)
 print('tau, p_value: ',tau, p_value)
 '''
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(8,6))
 ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*double_sub, np.ones(2)*double_sup, alpha=0.5, color = 'gray')
 ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*ratio_n3, np.ones(2)*ratio_n20, alpha=0.5, color = 'yellow')
-plt.xlabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]')
-plt.ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$')
+plt.tick_params(labelsize=15)
+plt.xlabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]',fontsize=15)
+plt.ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$',fontsize=15)
 for i in range(np.size(g_vSi)):
-	plt.errorbar(g_delta[i],g_ratio[i],xerr = Ug_delta[i],yerr = Ug_ratio[i], c = 'gray', capsize = 3, linestyle = '-', marker = sub_shape[g_subc[i]])
+	if i == 0:
+		ax.scatter(g_delta[i],g_ratio[i], c = 'gray', marker = 'o', label = 'Zero')
+	plt.errorbar(g_delta[i],g_ratio[i],xerr = Ug_delta[i],yerr = Ug_ratio[i], c = 'gray', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(b_delta)):
-	plt.errorbar(b_delta[i],b_ratio[i],xerr = Ub_delta[i],yerr = Ub_ratio[i], c = 'b', capsize = 3, linestyle = '-', marker = sub_shape[b_subc[i]])
+	if i == 0:
+		ax.scatter(b_delta[i],b_ratio[i], c = 'blue', marker = 'o', label = 'Blue-shifted')
+	plt.errorbar(b_delta[i],b_ratio[i],xerr = Ub_delta[i],yerr = Ub_ratio[i], c = 'b', capsize = 3, linestyle = '-', marker = 'o')
 for i in range(np.size(r_vSi)):
-	plt.errorbar(r_delta[i],r_ratio[i],xerr = Ur_delta[i],yerr = Ur_ratio[i], c = 'r', capsize = 3, linestyle = '-', marker = sub_shape[r_subc[i]])
-ax.text(1.6,0.02,'sub-M$_{Ch}$ Double Det.')
-ax.text(1.6,0.07,'M$_{Ch}$ Del. Det.')
-ax.text(1.75,0.04,'86G', c='b')
-ax.text(1.96,0.0325,'03gs',c='r')
+	if i == 0:
+		ax.scatter(r_delta[i],r_ratio[i], c = 'red', marker = 'o', label = 'Red-shifted')
+	plt.errorbar(r_delta[i],r_ratio[i],xerr = Ur_delta[i],yerr = Ur_ratio[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
+ax.text(1.5,0.015,'sub-M$_{Ch}$ Double Det.',fontsize=15)
+ax.text(1.5,0.07,'M$_{Ch}$ Del. Det.',fontsize=15)
+ax.text(1.75,0.04,'86G', c='b',fontsize=15)
+ax.text(1.96,0.0325,'03gs',c='r',fontsize=15)
+ax.text(0.75,0.01,'99aa',c='gray',fontsize=15)
 plt.show()
 
 for i in range(np.size(jlist)):

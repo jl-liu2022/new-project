@@ -372,9 +372,11 @@ for n in range(list_size):
 		ysimu = y1 + y2 + y3 + y4 + y5 + y6
 		'''
 
-		plt.title('%s  +%sd' %(target_name, phase))
-		plt.xlabel('Rest Wavelength [$\\rm \\AA$]')
-		plt.ylabel('Scaled Flux')
+		fig = plt.figure(figsize=(8,6))
+		plt.title('%s  +%sd' %(target_name, phase), fontsize=15)
+		plt.tick_params(labelsize=15)
+		plt.xlabel('Rest Wavelength [$\\rm \\AA$]',fontsize=15)
+		plt.ylabel('Scaled Flux',fontsize=15)
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
 		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
@@ -390,8 +392,7 @@ for n in range(list_size):
 		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
 		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
 		plt.plot(cut_xlist, y7, color="y",   label="continuum")
-		plt.legend(loc='upper right')
-		plt.savefig('./tempt_figure.pdf')
+		plt.legend()
 		plt.show()
 		'''
 		plt.savefig('./appendix/'+FigureName)
