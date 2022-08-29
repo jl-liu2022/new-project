@@ -206,7 +206,7 @@ for n in range(list_size):
 	sub2 =  0
 	sup2 =  upper_FWHM_Ni/2/300000/(2*np.log(2))**(1/2)
 	bound =  ([sub1,0.98,0.98,0,0,sub2],[sup1,1.02,1.02,float('inf'),float('inf'),sup2])
-	guess = [sig,1,1,200,100,sig]
+	guess = [sig,1,1,1,1,sig]
 	internal = int(xlist[1]) - int(xlist[0])
 
 
@@ -268,19 +268,22 @@ for n in range(list_size):
 		chi_ylist = Append(ylist_norm[pos[0]:(pos[1]+1)],ylist_norm[pos[2]:(pos[3]+1)])
 		chi_ylist = Append(chi_ylist,ylist_norm[(pos[4]):(pos[5]+1)])
 		chi_ylist = Append(chi_ylist,ylist_norm[(pos[6]):(pos[7]+1)]) 
-		#err_ylist = np.abs(np.array(fit_ylist) - np.array(chi_ylist))
+		err_ylist = np.abs(np.array(fit_ylist) - np.array(chi_ylist))
 		y7 = (y0 - y1) / (x0-x1) * (fit_xlist - x0) + y0
 		'''
 		plt.scatter(fit_xlist, fit_ylist - y7, s = 5)
 		plt.show()
 		'''
+		def double_G(x,s1,t1,t2,a,b,s2):
+			return fG(x,7155*s1,7155*t1,a)+fG(x,7378*s2,7378*t2,b) + (y0 - y1) / (x0-x1) * (x - x0) + y0
 
+		guess, guess_cov=optimize.curve_fit(double_G,fit_xlist,fit_ylist,p0=guess,sigma=err_ylist,maxfev=500000,bounds=bound)
 		def fGs(x,s1,t1,t2,a,b,s2):
 			return fG(x,7155*s1,7155*t1,a)+fG(x,7172*s1,7172*t1,0.24*a)+fG(x,7388*s1,7388*t1,0.19*a)+fG(x,7453*s1,7453*t1,0.31*a)+fG(x,7378*s2,7378*t2,b)+fG(x,7412*s2,7412*t2,0.31*b) + (y0 - y1) / (x0-x1) * (x - x0) + y0
 
-		params,params_covariance=optimize.curve_fit(fGs,fit_xlist,fit_ylist,guess,maxfev=500000,bounds=bound)
+		params,params_covariance=optimize.curve_fit(fGs,fit_xlist,fit_ylist,p0=guess,sigma=err_ylist,maxfev=500000,bounds=bound)
 
-		chi2 = np.sum((fGs(fit_xlist,params[0],params[1],params[2],params[3],params[4],params[5]) - fit_ylist)**2)/(np.size(fit_xlist)-6)
+		chi2 = np.sum((fGs(fit_xlist,params[0],params[1],params[2],params[3],params[4],params[5]) - fit_ylist)**2/err_ylist**2)/(np.size(fit_xlist)-6)
 
 		print('chi2: %f' %chi2)
 
@@ -387,8 +390,8 @@ for n in range(list_size):
 		plt.ylabel('Scaled Flux',fontsize=15)
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
-		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n reduced $\\chi^2 =$ %f"%chi2)
-		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
+		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n reduced $\\chi^2 =$ %f"%chi2)
+		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
 		plt.plot(cut_xlist, y1+y7, color="purple", label="[Fe II]",linestyle='--')
 		plt.plot(cut_xlist, y2+y7, color="purple",linestyle='--')
 		plt.plot(cut_xlist, y3+y7, color="purple",linestyle='--')
@@ -400,6 +403,7 @@ for n in range(list_size):
 		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
 		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
 		plt.plot(cut_xlist, y7, color="y",   label="continuum")
+		#plt.errorbar(fit_xlist,fit_ylist,yerr=err_ylist)
 		plt.legend()
 		plt.show()
 		

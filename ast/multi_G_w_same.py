@@ -280,7 +280,7 @@ for n in range(list_size):
 
 		print(params)
 
-		chi2 = np.sum((fGs(fit_xlist,params[0],params[1],params[2],params[3],params[4]) - fit_ylist)**2)/np.size(fit_xlist)
+		chi2 = np.sum((fGs(fit_xlist,params[0],params[1],params[2],params[3],params[4]) - fit_ylist)**2)/(np.size(fit_xlist)-6)
 
 		print('chi2: %f' %chi2)
 
@@ -379,8 +379,8 @@ for n in range(list_size):
 		plt.ylabel('Scaled Flux',fontsize=15)
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
-		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
-		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
+		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n reduced $\\chi^2 =$ %f"%chi2)
+		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
 		plt.plot(cut_xlist, y1+y7, color="purple", label="[Fe II]",linestyle='--')
 		plt.plot(cut_xlist, y2+y7, color="purple",linestyle='--')
 		plt.plot(cut_xlist, y3+y7, color="purple",linestyle='--')

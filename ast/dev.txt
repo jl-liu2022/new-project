@@ -120,7 +120,52 @@ A Great Goal--Artis:
 		non-thermal
 	code realization
 
+20220822:
+	goal:
+		finish the paper in next 5 days
+		day1:
+			read the all paper, polish and record problems
+		day2:
+			contact boss and polish paper
+	the first question:
+		how to cope with SN 2017fgc in section 2.1?
+
+20220823:
+	paper:
+		title:
+			constraining? implications?
+		abstract:
+			remove "improved"
+			fraction expression
+			add deltam vs. Ni/Fe 
+		Introduction:
+			email
+			remove "this relation can be attributed to"
+			induce Ni/Fe
+		Data:
+			17fgc?
+			in prep
+		Method:
+			Co III
+		Result:
+
+		Acknowledge:
+			add what? Funds?
+		Appendix:
+			format
 
 
+基础知识：
+	基础概念
+	公式定理
 
+运用：
+	基础知识+思考尝试->答案
 
+1+(-5)=?
+
+常用的一些思考方式：
+	逆推
+	凑数
+
+所谓难->"复杂"，熟练即可->刷题，积累经验

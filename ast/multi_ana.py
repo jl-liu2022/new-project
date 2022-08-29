@@ -335,7 +335,7 @@ for i in range(number1):
 	spectra_y.append(ylist[pos[0]:(pos[1]+1)]+0.02*qlist[i])
 
 plt.show()
-
+exit()
 fig, ax = plt.subplots()
 plt.tick_params(labelsize=15)
 ax.set_xlabel('Wavelength [$\\rm \\AA$]',fontsize=15)
