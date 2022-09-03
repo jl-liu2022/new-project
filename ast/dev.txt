@@ -134,6 +134,8 @@ A Great Goal--Artis:
 	paper:
 		title:
 			constraining? implications?
+		author:
+			institutions
 		abstract:
 			remove "improved"
 			fraction expression
@@ -143,7 +145,7 @@ A Great Goal--Artis:
 			remove "this relation can be attributed to"
 			induce Ni/Fe
 		Data:
-			17fgc?
+			17fgc? how to describe our project?
 			in prep
 		Method:
 			Co III
@@ -169,3 +171,28 @@ A Great Goal--Artis:
 	凑数
 
 所谓难->"复杂"，熟练即可->刷题，积累经验
+
+TNT us
+nanshan Zeng Abu
+LCO
+ATLAS ZTF limit rising time
+HST progenitor
+TNS
+Tele
+lightcurve Zeng
+
+ratio evolution comparison figure 14J Zhang
+notice bad fitting  
+compare fitting result
+scale figure
+normalize size
+16hvf
+22hrs
+Yan Shengyu database LCO
+
+SEDONA
+
+天文培养方案解读
+博资考:
+	common knowledge
+	behind technology

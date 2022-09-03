@@ -387,7 +387,7 @@ for n in range(list_size):
 		plt.ylabel('Scaled Flux',fontsize=15)
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
 		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
-		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n reduced $\\chi^2 =$ %f"%chi2)
+		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n reduced $r^2 =$ %f"%chi2)
 		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
 		plt.plot(cut_xlist, y1+y7, color="purple", label="[Fe II]",linestyle='--')
 		plt.plot(cut_xlist, y2+y7, color="purple",linestyle='--')
@@ -431,7 +431,7 @@ for n in range(list_size):
 			if (Min2 - Max1) >= 10:
 				save_as = '_IMG.dat'
 			else:
-				save_as = '_IMG.dat'
+				save_as = '_pr.dat'
 			with open('result_data0'+save_as,'a') as f:
 				f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(todo_name, phase, delta15, U_delta15, redshift, E_B_V, vSi, U_vSi, ratio_ave_bef * 1.8, vshift_Fe, vshift_Ni, FWHM_Fe, FWHM_Ni, flux_ratio))
 				g = 1

@@ -130,6 +130,11 @@ name = ['SN1990N', 'SN1991T','SN1993Z','SN1994ae','SN1995D','SN1996X','SN1998aq'
 'SN2009ig','SN2009le','SN2010ev','SN2010gp','SN2011at','SN2011by','SN2011ek','SN2011fe','SN2011im','SN2011iv',
 'SN2012cg','SN2012fr','SN2012hr','SN2012ht','SN2013aa','SN2013cs','SN2013dy','SN2013gy','SN2014J',
 'SN2015F','ASASSN-14jg']
+Phase = [280,316,233,368,284.7,246,241.5,280,256,227,275,216,
+385,272,201,323,397,228,319,277,301,304,201,
+405,324,272,279,349,310,423,311,314,318,
+279,261,283,433,399,303,333,276,351,
+280,323]
 delta =  [0.95,0.94,0.00,0.89,1.01,1.30,1.02,1.06,0.81,1.15,1.13,1.32,
 1.17,1.00,1.93,1.45,0.93,1.40,1.07,1.26,1.16,1.02,1.25,
 0.90,0.00,0.00,0.00,0.00,1.14,0.00,1.18,0.00,0.00, 
@@ -141,29 +146,25 @@ Udelta = [0.05,0.03,0.00,0.05,0.03,0.05,0.03,0.04,0.02,0.03,0.03,0.03,
 0.03,0.05,0.01,0.00,0.01,0.18,0.01,0.03,0.02,
 0.02,0.01]
 
-ratio = [0.023,0.031,0.033,0.050,0.008,0.053,0.037,0.059,0.055,0.051,0.051,0.083,
+ratio = [0.023,0.031,0.033,0.050,0.008,0.053,0.037,0.059,0.053,0.051,0.051,0.083,
 0.049,0.031,0.054,0.087,0.032,0.055,0.029,0.065,0.035,0.032,0.081,
 0.028,0.036,0.044,0.033,0.059,0.039,0.020,0.041,0.047,0.051,
-0.025,0.028,0.021,0.009,0.026,0.022,0.025,0.057,0.026,
+0.025,0.030,0.021,0.009,0.027,0.029,0.025,0.053,0.033,
 0.050,0.039]
-tUratio = [[0.005,0.011,0.007,0.009,0.006,0.020,0.011,0.008,0.012,0.010,0.010,0.019,
+tUratio = [[0.005,0.011,0.007,0.009,0.006,0.020,0.011,0.008,0.009,0.010,0.010,0.019,
 0.008,0.009,0.008,0.012,0.007,0.009,0.005,0.008,0.006,0.005,0.011,
 0.005,0.006,0.007,0.005,0.010,0.006,0.005,0.006,0.013,0.018,
-0.005,0.005,0.006,0.004,0.005,0.010,0.005,0.010,0.005,
+0.005,0.006,0.006,0.004,0.005,0.006,0.005,0.009,0.007,
 0.006,0.007],
-[0.004,0.009,0.006,0.008,0.006,0.018,0.010,0.008,0.010,0.009,0.008,0.016,
+[0.004,0.009,0.006,0.008,0.006,0.018,0.010,0.008,0.008,0.009,0.008,0.016,
 0.007,0.008,0.007,0.010,0.006,0.008,0.006,0.007,0.005,0.005,0.010,
 0.005,0.005,0.006,0.005,0.009,0.006,0.006,0.005,0.011,0.015,
-0.005,0.005,0.006,0.004,0.005,0.008,0.005,0.008,0.006,
+0.005,0.005,0.006,0.004,0.006,0.005,0.005,0.008,0.006,
 0.006,0.006]]
 Uratio = []
 for i in range(N):
 	Uratio.append([[tUratio[0][i]],[tUratio[1][i]]])
-phase = [280,316,233,368,284.7,246,241.5,280.4,282.6,227.7,275,216,
-385,272,201,323,397.3,228,319.6,277.6,301,304.7,201.1,
-405,324,272,279,349,310,423,311,314,318,
-279,290,283,433,344,300,333,280,282,
-280,323]
+
 '''
 cm = plt.cm.get_cmap('Blues')
 plt.xlabel('The decline-rate parameter [magnitude]')
@@ -200,7 +201,13 @@ name1, phase1, delta1, Udelta1, vSi1, UvSi1, ratio1, vFe1, vNi1, wFe1, wNi1, r_f
 name1.append('tail')
 UvFe1, UvNi1, UwFe1, UwNi1, U_r_flux1, edge_blue, edge_red = rU('Uncertenty_IMG.dat',1)
 
+name2, phase2, delta2, Udelta2, vSi2, UvSi2, ratio2, vFe2, vNi2, wFe2, wNi2, r_flux2, subc2, number2 = rdata('result_data0_pr.dat',1)
+name2.append('tail')
+UvFe2, UvNi2, UwFe2, UwNi2, U_r_flux2, edge_blue2, edge_red2 = rU('Uncertenty_pr.dat',1)
+
+
 print(number1)
+print(number2)
 
 def Fe56(t, Ni, Co, lambda_Ni, lambda_Co):
 	return Co + 1 - Co*np.exp(-lambda_Co*t) - lambda_Co*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Ni*t) + lambda_Ni*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Co*t)
@@ -330,41 +337,44 @@ for i in range(number1):
 		elif int(xlist[j]) >= Max1 and indicator == 1:
 			pos[1] = j
 			break
-	ylist = ylist/np.max(signal.savgol_filter(ylist[pos[0]:(pos[1]+1)],51,1))*0.05 
+	ylist = ylist/np.max(signal.savgol_filter(ylist[pos[0]:(pos[1]+1)],51,1))
 	spectra_x.append(xlist[pos[0]:(pos[1]+1)])
-	spectra_y.append(ylist[pos[0]:(pos[1]+1)]+0.02*qlist[i])
+	spectra_y.append(ylist[pos[0]:(pos[1]+1)])
+	#spectra_y.append(ylist[pos[0]:(pos[1]+1)]+0.02*qlist[i])
 
 plt.show()
-exit()
+
+np.random.seed(399991)
 fig, ax = plt.subplots()
 plt.tick_params(labelsize=15)
 ax.set_xlabel('Wavelength [$\\rm \\AA$]',fontsize=15)
-ax.set_ylabel('Scaled Flux + constant',fontsize=15)
-ax.set_yticks([])
+ax.set_ylabel('Scaled Flux',fontsize=15)
 i = 0
 shift_factor = 0.8
 while(i < number1):
 	if name1[i] == 'SN2011fe':
+		#color = (np.random.rand(),np.random.rand(),np.random.rand())
 		n = i
-		plt.plot(spectra_x[i], spectra_y[i] - shift_factor)
+		plt.title('SN 2011fe')
+		plt.plot(spectra_x[i], spectra_y[i], label='+%d d'%phase1[i])
 		start = np.argmax(np.array(spectra_x[i])>=edge_blue[i])
 		print(start)
 		end = np.argmax(np.array(spectra_x[i])>=edge_red[i])
 		continuum_x = [spectra_x[i][start], spectra_x[i][end]]
-		continuum_y = [spectra_y[i][start]- shift_factor, spectra_y[i][end]- shift_factor]
-		plt.plot(continuum_x, continuum_y, c='gray', label = 'continuum')
+		continuum_y = [spectra_y[i][start], spectra_y[i][end]]
+		k = (continuum_y[1] - continuum_y[0])/(continuum_x[1] - continuum_x[0])
+		print('k: %s' %k)
+		plt.plot(continuum_x, continuum_y, c='gray', label = 'pseudo-continuum')
 		size_x = np.size(spectra_x[i])
-		plt.text(spectra_x[i][size_x-1]-400, spectra_y[i][size_x-1] - shift_factor + 0.01, name1[i] + ', +%s d' %phase1[i],size=13)
 		while(name1[n+1] == 'SN2011fe'):
 			n += 1
-			plt.plot(spectra_x[n], spectra_y[n] - shift_factor)
+			plt.plot(spectra_x[n], spectra_y[n], label='+%d d'%phase1[n])
 			start = np.argmax(np.array(spectra_x[n])>=edge_blue[n])
 			end = np.argmax(np.array(spectra_x[n])>=edge_red[n])
 			continuum_x = [spectra_x[n][start], spectra_x[n][end]]
-			continuum_y = [spectra_y[n][start]- shift_factor, spectra_y[n][end]- shift_factor]
+			continuum_y = [spectra_y[n][start], spectra_y[n][end]]
 			plt.plot(continuum_x, continuum_y, c='gray')
 			size_x = np.size(spectra_x[n])
-			plt.text(spectra_x[n][size_x-1]-400, spectra_y[n][size_x-1] - shift_factor + 0.01, name1[n] + ', +%s d' %phase1[n],size=13)
 		i += n-i
 	'''
 	if name1[i] == 'SN2012fr':
@@ -393,10 +403,13 @@ while(i < number1):
 	i += 1
 
 
-collection = collections.BrokenBarHCollection.span_where(np.linspace(6800,7000,100),ymin=0,ymax=0.15,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
+collection = collections.BrokenBarHCollection.span_where(np.linspace(6800,7000,100),ymin=0,ymax=0.6,where=np.ones(100)>0,facecolor='gray',alpha=0.5)
 ax.add_collection(collection)
-plt.legend(loc='upper right',fontsize=15)
+plt.text(6800, 0.68, 'excess flux', fontsize=15)
+plt.legend(fontsize=15)
 plt.show()
+
+exit()
 
 '''
 cm = plt.cm.get_cmap('viridis')
@@ -440,6 +453,7 @@ lambda_Co = 1/111
 
 u1 = 0.4
 U_ratio1 = []
+U_ratio2 = []
 for i in range(number1):
 	ratio1[i] = ratio1[i]*58/56*mean/integrate*Fe56(phase1[i]+18, 1, 0, lambda_Ni, lambda_Co)
 	u4 = U_r_flux1[i]/r_flux1[i]
@@ -447,6 +461,68 @@ for i in range(number1):
 	UvNi1[i] += 200
 	U_ratio1_t = np.sqrt(u1**2 + u4**2)*ratio1[i]
 	U_ratio1.append(U_ratio1_t)
+
+for i in range(number2):
+	ratio2[i] = ratio2[i]*58/56*mean/integrate*Fe56(phase2[i]+18, 1, 0, lambda_Ni, lambda_Co)
+	u4 = U_r_flux2[i]/r_flux2[i]
+	UvFe2[i] += 200
+	UvNi2[i] += 200
+	U_ratio2_t = np.sqrt(u1**2 + u4**2)*ratio2[i]
+	U_ratio2.append(U_ratio2_t)
+
+np.random.seed(399991)
+
+for i in range(number1+1):
+	if name1[i] == "SN2014J":
+		begin1 = i
+		while(1):
+			i += 1
+			if name1[i] != "SN2014J":
+				end1 = i
+				break
+		break
+
+for i in range(number2+1):
+	if name2[i] == "SN2014J":
+		begin2 = i
+		while(1):
+			i += 1
+			if name2[i] != "SN2014J":
+				end2 = i
+				break
+		break
+print(begin1, end1, begin2, end2)
+fig = plt.figure()
+ax = fig.subplots(3,1,sharex=True)
+
+ax[0].tick_params(labelsize=15)
+ax[0].plot(phase1[begin1:end1], r_flux1[begin1:end1], c='b')
+ax[0].errorbar(phase1[begin1:end1], r_flux1[begin1:end1], yerr = U_r_flux1[begin1:end1], c = 'b', capsize = 3, linestyle = '-', marker = 'o', label='bluer blue endpoint')
+ax[0].plot(phase2[begin2:end2], r_flux2[begin2:end2], c='r')
+ax[0].errorbar(phase2[begin2:end2], r_flux2[begin2:end2], yerr = U_r_flux2[begin2:end2], c = 'r', capsize = 3, linestyle = '-', marker = 'o', label='reder blue endpoint')
+ax[0].set_ylabel('$F_{7378}/F_{7155}$',fontsize=15)
+ax[0].legend()
+
+ax[1].tick_params(labelsize=15)
+ax[1].set_ylabel('[Fe II] Vel. [km/s]', fontsize=15)
+ax[1].plot(phase1[begin1:end1], vFe1[begin1:end1], c='b')
+ax[1].errorbar(phase1[begin1:end1], vFe1[begin1:end1], yerr = UvFe1[begin1:end1], c = 'b', capsize = 3, linestyle = '-', marker = 'v', label='bluer blue endpoint')
+ax[1].plot(phase2[begin2:end2], vFe2[begin2:end2], c='r')
+ax[1].errorbar(phase2[begin2:end2], vFe2[begin2:end2], yerr = UvFe2[begin2:end2], c = 'r', capsize = 3, linestyle = '-', marker = 'v', label='reder blue endpoint')
+ax[1].legend()
+
+ax[2].tick_params(labelsize=15)
+ax[2].set_ylabel('[Ni II] Vel. [km/s]', fontsize=15)
+ax[2].plot(phase1[begin1:end1], vNi1[begin1:end1], c='b')
+ax[2].errorbar(phase1[begin1:end1], vNi1[begin1:end1], yerr = UvNi1[begin1:end1], c = 'b', capsize = 3, linestyle = '-', marker = '^', label='bluer blue endpoint')
+ax[2].plot(phase2[begin2:end2], vNi2[begin2:end2], c='r')
+ax[2].errorbar(phase2[begin2:end2], vNi2[begin2:end2], yerr = UvNi2[begin2:end2], c = 'r', capsize = 3, linestyle = '-', marker = '^', label='reder blue endpoint')
+ax[2].set_xlabel('Phase [Days Since Peak Brightness]',fontsize=15)
+ax[2].legend()
+
+plt.show()
+
+
 
 np.random.seed(399991)
 plt.xlabel('Phase [Days Since Peak Brightness]')
@@ -586,22 +662,43 @@ plt.show()
 
 
 j0 = 0
-'''
 
+green_n = 0
+purple_n = 0
 for i in range(N):
 	for j in range(j0, number1, 1):
-		if name[i] == name1[j]:
-			plt.errorbar(ratio1[j], ratio[i], xerr = U_ratio1[j], yerr = Uratio[i], capsize = 3, linestyle = '-', marker = 'o', c = 'b')
+		if name[i] == name1[j] and Phase[i] == phase1[j]:
+			if Phase[i] < 300:
+				if green_n == 0:
+					plt.scatter(ratio1[j], ratio[i], marker = 'o', c = 'green', label = '< +300 d')
+					green_n = 1
+				plt.errorbar(ratio1[j], ratio[i], xerr = U_ratio1[j], yerr = Uratio[i], capsize = 3, linestyle = '-', marker = 'o', c = 'green')
+			else:
+				if purple_n == 0:
+					plt.scatter(ratio1[j], ratio[i], marker = 'o', c = 'purple', label = '> +300 d')
+					purple_n = 1
+				plt.errorbar(ratio1[j], ratio[i], xerr = U_ratio1[j], yerr = Uratio[i], capsize = 3, linestyle = '-', marker = 'o', c = 'purple')
+				
 			j0 = j+1
 			break
-
-plt.xlabel('This work')
-plt.ylabel('Flor')
-plt.plot(np.linspace(0,np.max(ratio),10), np.linspace(0,np.max(ratio),10), c = 'grey', linestyle = '--')
-plt.scatter(0.05, 0.05, label = '$\\rm M_{Ni}/M_{Fe}$', alpha = 0)
-plt.legend(loc = 'upper left', frameon=False)
+plt.tick_params(labelsize=15)
+plt.xlabel('This work',fontsize=15)
+plt.ylabel('Fl$\\"o$r',fontsize=15)
+plt.plot(np.linspace(0,np.max(ratio),10), np.linspace(0,np.max(ratio),10), c = 'grey', linestyle = '--',label='y=x')
+plt.text(0.00, 0.095,'$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$',fontsize=15)
+plt.text(0.154,0.045,'15F',fontsize=15)
+plt.plot([0.154,0.1474],[0.045,0.049],c='black')
+plt.text(0.09,0.027,'14J',fontsize=15)
+plt.plot([0.09,0.085],[0.027,0.0317],c='black')
+plt.text(0.0277,0.056,'03gs',fontsize=15)
+plt.plot([0.033,0.0264],[0.056,0.0536],c='black')
+plt.text(0.0,0.046,'99aa',fontsize=15)
+plt.plot([0.0164,0.022],[0.048,0.051],c='black')
+plt.legend(fontsize=15)
 plt.show()
 
+exit()
+'''
 jlist=[]
 head = 0
 for i in range(1,number1):
