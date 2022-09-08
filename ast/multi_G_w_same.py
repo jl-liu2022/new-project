@@ -372,27 +372,45 @@ for n in range(list_size):
 		ysimu = y1 + y2 + y3 + y4 + y5 + y6
 		'''
 
-		fig = plt.figure(figsize=(8,6))
-		plt.title('%s  +%sd' %(target_name, phase), fontsize=15)
-		plt.tick_params(labelsize=15)
-		plt.xlabel('Rest Wavelength [$\\rm \\AA$]',fontsize=15)
-		plt.ylabel('Scaled Flux',fontsize=15)
-		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
-		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
-		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n reduced $r^2 =$ %f"%chi2)
-		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
-		plt.plot(cut_xlist, y1+y7, color="purple", label="[Fe II]",linestyle='--')
-		plt.plot(cut_xlist, y2+y7, color="purple",linestyle='--')
-		plt.plot(cut_xlist, y3+y7, color="purple",linestyle='--')
-		plt.plot(cut_xlist, y4+y7, color="purple",linestyle='--')
-		plt.plot(cut_xlist, y5+y7, color="green", label="[Ni II]",linestyle='--')
-		plt.plot(cut_xlist, y6+y7, color="green",linestyle='--')
-		plt.plot(cut_xlist[0:(pos[1] - pos[0]+1)], np.ones(pos[1]-pos[0]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b', label = 'fit region')
-		plt.plot(cut_xlist[(pos[2] - pos[0]):(pos[3] - pos[0]+1)], np.ones(pos[3]-pos[2]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
-		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
-		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
-		plt.plot(cut_xlist, y7, color="y",   label="continuum")
-		plt.legend()
+		label_size = 25
+		fig = plt.figure(figsize=(8.5, 8.5))
+		plt.title('%s  +%sd' %(target_name, phase), fontsize=label_size)
+		plt.tick_params(labelsize=label_size)
+		plt.xlabel('Rest Wavelength [$\\rm \\AA$]',fontsize=label_size)
+		plt.ylabel('Scaled Flux',fontsize=label_size)
+		min_t = xlist[pos[0]]-100
+		max_t = xlist[pos[7]]+100
+		pos_t = [0,0]
+		indicator = 0
+		for j in range(np.size(xlist)):
+			if int(xlist[j]) >= min_t and indicator == 0:
+				pos_t[0] = j
+				indicator = 1
+			elif int(xlist[j]) >= max_t and indicator == 1:
+				pos_t[1] = j
+				break
+		if pos_t[1] == 0:
+			pos_t[1] = -1
+		print(pos_t)
+		print(pos)
+		scale_factor = np.max(ylist_t[pos_t[0]:pos_t[1]])
+		plt.plot(xlist[pos_t[0]:pos_t[1]], ylist_norm[pos_t[0]:pos_t[1]]/scale_factor, color="gray", label="data")
+		plt.plot(xlist[pos_t[0]:pos_t[1]], ylist_t[pos_t[0]:pos_t[1]]/scale_factor,color='black',label='smoothed data')
+		plt.plot(cut_xlist, (ysimu+y7)/scale_factor, color="red",  label="Gaussian fits")
+		plt.plot(cut_xlist, (y1+y7)/scale_factor, color="purple", label="[Fe II]",linestyle='--')
+		plt.plot(cut_xlist, (y2+y7)/scale_factor, color="purple",linestyle='--')
+		plt.plot(cut_xlist, (y3+y7)/scale_factor, color="purple",linestyle='--')
+		plt.plot(cut_xlist, (y4+y7)/scale_factor, color="purple",linestyle='--')
+		plt.plot(cut_xlist, (y5+y7)/scale_factor, color="green", label="[Ni II]",linestyle='--')
+		plt.plot(cut_xlist, (y6+y7)/scale_factor, color="green",linestyle='--')
+		plt.plot(cut_xlist[0:(pos[1] - pos[0]+1)], np.ones(pos[1]-pos[0]+1)*min(ylist_t[pos_t[0]:pos_t[1]])/scale_factor*0.9, c = 'b', label = 'fit region')
+		plt.plot(cut_xlist[(pos[2] - pos[0]):(pos[3] - pos[0]+1)], np.ones(pos[3]-pos[2]+1)*min(ylist_t[pos_t[0]:pos_t[1]])/scale_factor*0.9, c = 'b')
+		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[pos_t[0]:pos_t[1]])/scale_factor*0.9, c = 'b')
+		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[pos_t[0]:pos_t[1]])/scale_factor*0.9, c = 'b')
+		plt.plot(cut_xlist, y7/scale_factor, color="y",   label="pseudo-\ncontinuum")
+		#plt.text(xlist[pos_t[0]], 1.05, "reduced $r^2 =$ %f"%chi2, fontsize=15)
+		plt.scatter(xlist[pos_t[0]], 1.05, alpha=0)
+		plt.legend(fontsize=15)
 		plt.show()
 		'''
 		plt.savefig('./appendix/'+FigureName)

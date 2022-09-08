@@ -39,7 +39,7 @@ def w_to_v_norm(wavelength, center):
 	return velocity
 
 #template
-with open('/Users/pro/python/spectra_data/paper/SN1999by/SN1999by.dat','r') as f:
+with open('paper/SN1999by/SN1999by.dat','r') as f:
 	line = f.readline()
 	a = line.split()
 	redshift = float(a[1])
@@ -80,7 +80,7 @@ while(1):
 	for i in range(len(filename)):
 		if filename[i] == '/':
 			target_name = filename[:i]
-	with open('/Users/pro/python/spectra_data/paper/' + filename,'r') as f:
+	with open('paper/' + filename,'r') as f:
 		line = f.readline()
 		a = line.split()
 		phase = int(a[1])
@@ -170,7 +170,6 @@ while(1):
 			print(len(cut_ylist))
 			plt.plot(xlist, ylist, c = 'gray')
 			plt.plot(cut_xlist, cut_ylist, c = 'black')
-			plt.legend(loc='upper right')
 			plt.show()
 			go = input("go?(y/n): ")
 			if go != 'n':
@@ -329,8 +328,8 @@ while(1):
 		
 
 		fig, axs = plt.subplots()
-		plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
-		plt.rcParams['axes.unicode_minus'] = False
+		#plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
+		#plt.rcParams['axes.unicode_minus'] = False
 		axs.set_xlabel('Rest Wavelength [$\\rm \\AA$]')
 		axs.set_ylabel('Scaled FLux')
 		axs.set_title('SN 1999by +183d')
@@ -338,8 +337,8 @@ while(1):
 		plt.show()
 
 		fig, axs = plt.subplots()
-		plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
-		plt.rcParams['axes.unicode_minus'] = False
+		#plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']
+		#plt.rcParams['axes.unicode_minus'] = False
 		axs.set_title('%s  +%sd' %(target_name, phase))
 		axs.set_xlabel('Rest Wavelength [$\\rm \\AA$]')
 		axs.set_ylabel('Scaled FLux')

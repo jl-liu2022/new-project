@@ -70,7 +70,7 @@ name.append('tail')
 
 UvFe, UvNi, UwFe, UwNi, U_r_flux = rU('Uncertenty_'+save_as+'.dat',1)
 ref_spectra = [1,2,2,2,'BSNIP','BSNIP','BSNIP',3,4,5,'BSNIP',6,'CfA',7,'BSNIP','BSNIP','BSNIP','CfA','BSNIP','BSNIP',8,8,9,9,9,9,9,
-10,11,12,12,12,12,12,13,13,11,14,12,9,9,16,13,18,19,18,21,22,22,'This work','This work','This work','This work',18,13,20]
+10,11,12,12,12,12,12,13,13,11,14,12,12,9,16,9,16,13,18,19,18,21,22,22,23,23,24,24,18,13,20]
 
 def Fe56(t, Ni, Co, lambda_Ni, lambda_Co):
 	return Co + Ni - Co*np.exp(-lambda_Co*t) - lambda_Co*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Ni*t) + lambda_Ni*Ni/(lambda_Co-lambda_Ni)*np.exp(-lambda_Co*t)

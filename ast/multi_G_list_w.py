@@ -350,10 +350,23 @@ for n in range(list_size):
 		FWHM_Ni = params[5] * 2 * 300000 * np.sqrt(2*np.log(2))
 		vshift_Fe = (params[1] - 1) * 300000 
 		vshift_Ni = (params[2] - 1) * 300000
+		x_t = [x0, x1]
+		y_t = [y0, cut_ylist_f[pos[7] - pos[0]]]
+		def pEW_Fe_t(x):
+			return fG(x,7155*params[0],7155*params[1],params[3])/((y_t[0] - y_t[1]) / (x_t[0] - x_t[1]) * (x - x_t[0]) + y_t[0])
+
+		def pEW_Ni_t(x):
+			return fG(x,7378*params[5],7378*params[2],params[4])/((y_t[0] - y_t[1]) / (x_t[0] - x_t[1]) * (x - x_t[0]) + y_t[0])
+
+		print(pEW_Fe_t(7500), pEW_Ni_t(7500))
+		print(x_t, y_t)
+		pEW_Fe, err_pEW_Fe = itg.quad(pEW_Fe_t, x0, x1)
+		pEW_Ni, err_pEW_Ni = itg.quad(pEW_Ni_t, x0, x1)
+		pEW_ratio = pEW_Ni/pEW_Fe
 		flux_ratio = params[4] * params[5] * 7378 / params[3] / params[0] / 7155
 		high_ratio = params[4] / params[3]
 
-		print('FWHM_Fe: %f, FWHM_Ni: %f, vshift_Fe: %f, vshift_Ni: %f, flux_ratio Ni/Fe: %f, high_ratio Ni/Fe: %s' % (FWHM_Fe,FWHM_Ni, vshift_Fe, vshift_Ni, flux_ratio, high_ratio))
+		print('FWHM_Fe: %f, FWHM_Ni: %f, vshift_Fe: %f, vshift_Ni: %f, flux_ratio Ni/Fe: %f, pEW_ratio Ni/Fe: %s' % (FWHM_Fe,FWHM_Ni, vshift_Fe, vshift_Ni, flux_ratio, pEW_ratio))
 
 
 		def f1(x):
@@ -373,14 +386,29 @@ for n in range(list_size):
 		ysimu = y1 + y2 + y3 + y4 + y5 + y6
 		'''
 
-		fig = plt.figure(figsize=(8,6))
-		plt.title('%s  +%sd' %(target_name, phase), fontsize=15)
-		plt.tick_params(labelsize=15)
-		plt.xlabel('Rest Wavelength [$\\rm \\AA$]',fontsize=15)
-		plt.ylabel('Scaled Flux',fontsize=15)
-		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_norm[(pos[0]-100):(pos[7]+100+1)], color="gray", label="data")
-		plt.plot(xlist[(pos[0]-100):(pos[7]+100+1)], ylist_t[(pos[0]-100):(pos[7]+100+1)],color='black',label='smoothed data')
-		#plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits\n $\\overline{\\chi^2} =$ %f"%chi2)
+		label_size = 25
+		fig = plt.figure(figsize=(8.5,8.5))
+		plt.title('%s  +%sd' %(target_name, phase), fontsize=label_size)
+		plt.tick_params(labelsize=label_size)
+		plt.xlabel('Rest Wavelength [$\\rm \\AA$]',fontsize=label_size)
+		plt.ylabel('Scaled Flux',fontsize=label_size)
+		min_t = xlist[pos[0]]-100
+		max_t = xlist[pos[7]]+100
+		pos_t = [0,0]
+		indicator = 0
+		for j in range(np.size(xlist)):
+			if int(xlist[j]) >= min_t and indicator == 0:
+				pos_t[0] = j
+				indicator = 1
+			elif int(xlist[j]) >= max_t and indicator == 1:
+				pos_t[1] = j
+				break
+		if pos_t[1] == 0:
+			pos_t[1] = -1
+		print(pos_t)
+		print(pos)
+		plt.plot(xlist[pos_t[0]:pos_t[1]], ylist_norm[pos_t[0]:pos_t[1]], color="gray", label="data")
+		plt.plot(xlist[pos_t[0]:pos_t[1]], ylist_t[pos_t[0]:pos_t[1]],color='black',label='smoothed data')
 		plt.plot(cut_xlist, ysimu+y7, color="red",  label="Gaussian fits")
 		plt.plot(cut_xlist, y1+y7, color="purple", label="[Fe II]",linestyle='--')
 		plt.plot(cut_xlist, y2+y7, color="purple",linestyle='--')
@@ -388,18 +416,18 @@ for n in range(list_size):
 		plt.plot(cut_xlist, y4+y7, color="purple",linestyle='--')
 		plt.plot(cut_xlist, y5+y7, color="green", label="[Ni II]",linestyle='--')
 		plt.plot(cut_xlist, y6+y7, color="green",linestyle='--')
-		plt.plot(cut_xlist[0:(pos[1] - pos[0]+1)], np.ones(pos[1]-pos[0]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b', label = 'fit region')
-		plt.plot(cut_xlist[(pos[2] - pos[0]):(pos[3] - pos[0]+1)], np.ones(pos[3]-pos[2]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
-		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
-		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[(pos[0]-100):(pos[7]+100+1)])*0.9, c = 'b')
-		plt.plot(cut_xlist, y7, color="y",   label="continuum")
-		plt.legend()
-		plt.show()
-		'''
-		plt.savefig('./appendix/'+FigureName)
+		plt.plot(cut_xlist[0:(pos[1] - pos[0]+1)], np.ones(pos[1]-pos[0]+1)*min(ylist_t[pos_t[0]:pos_t[1]])*0.9, c = 'b', label = 'fit region')
+		plt.plot(cut_xlist[(pos[2] - pos[0]):(pos[3] - pos[0]+1)], np.ones(pos[3]-pos[2]+1)*min(ylist_t[pos_t[0]:pos_t[1]])*0.9, c = 'b')
+		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*min(ylist_t[pos_t[0]:pos_t[1]])*0.9, c = 'b')
+		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*min(ylist_t[pos_t[0]:pos_t[1]])*0.9, c = 'b')
+		plt.plot(cut_xlist, y7, color="y",   label="pseudo-\ncontinuum")
+		#plt.text(xlist[pos_t[0]], 1.05, "reduced $r^2 =$ %f"%chi2, fontsize=15)
+		plt.scatter(xlist[pos_t[0]], 1.05, alpha=0)
+		plt.legend(fontsize=15)
+		
+		#plt.savefig('figures/' + NameList[n] + '_' + PhaseList[n] + '.pdf')
 		plt.show(block=False)
 		plt.pause(1)
-		'''
 		plt.close()
 		'''
 		ymin = np.min(ylist[pos[0]:(pos[5]+1)] - y7)
@@ -441,7 +469,7 @@ for n in range(list_size):
 			else:
 				save_as = '_IMG.dat'
 			with open('result_data0'+save_as,'a') as f:
-				f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(target_name, phase, delta15, U_delta15, redshift, E_B_V, vSi, U_vSi, ratio_ave_bef * 1.8, vshift_Fe, vshift_Ni, FWHM_Fe, FWHM_Ni, flux_ratio))
+				f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(target_name, phase, delta15, U_delta15, redshift, E_B_V, vSi, U_vSi, ratio_ave_bef * 1.8, vshift_Fe, vshift_Ni, FWHM_Fe, FWHM_Ni, pEW_ratio))
 				g = 1
 				break
 		elif q == 3:
@@ -501,26 +529,44 @@ for n in range(list_size):
 		params[1] = params_i[1]
 		params[3] = params_i[2]
 		
+		x_t = [x0, x1]
+		y_t = [y0, cut_ylist_f[pos[7] - pos[0]]]
+		def pEW_Fe_t(x):
+			return fG(x,7155*params[0],7155*params[1],params[3])/((y_t[0] - y_t[1]) / (x_t[0] - x_t[1]) * (x - x_t[0]) + y_t[0])
+
+		def pEW_Ni_t(x):
+			return fG(x,7378*params[5],7378*params[2],params[4])/((y_t[0] - y_t[1]) / (x_t[0] - x_t[1]) * (x - x_t[0]) + y_t[0])
+
+		pEW_Fe, err_pEW_Fe = itg.quad(pEW_Fe_t, x0, x1)
+		pEW_Ni, err_pEW_Ni = itg.quad(pEW_Ni_t, x0, x1)
+		pEW_ratio = pEW_Ni/pEW_Fe
 		f_ratio = params[4] * params[5] / params[3] / params[0]
 		h_ratio = params[4] / params[3]
 		'''
 		'''
 		if np.abs(f_ratio/flux_ratio[0]) < 2 and np.abs(f_ratio/flux_ratio[0]) > 0.1 and np.abs(h_ratio/high_ratio[0]) < 3 and np.abs(h_ratio/high_ratio[0]) > 0.1:
 		'''	
+		def pEW_Fe_t(x):
+			return fG(x,7155*params[0],7155*params[1],params[3])/((y_t[0] - y_t[1]) / (x_t[0] - x_t[1]) * (x - x_t[0]) + y_t[0])
 
+		def pEW_Ni_t(x):
+			return fG(x,7378*params[5],7378*params[2],params[4])/((y_t[0] - y_t[1]) / (x_t[0] - x_t[1]) * (x - x_t[0]) + y_t[0])
+
+		pEW_Fe, err_pEW_Fe = itg.quad(pEW_Fe_t, x0, x1)
+		pEW_Ni, err_pEW_Ni = itg.quad(pEW_Ni_t, x0, x1)
 		Up_FWHM_Fe = FWHM_Fe - params[0] * 2 * 300000 * np.sqrt(2*np.log(2))
 		Up_vshift_Fe = vshift_Fe - (params[1] - 1) * 300000
 		Up_FWHM_Ni = FWHM_Ni - params[5] * 2 * 300000 * np.sqrt(2*np.log(2))
 		Up_vshift_Ni = vshift_Ni - (params[2] - 1) * 300000
 		Up_flux_ratio = flux_ratio - params[4] * params[5] * 7378 / params[3] / params[0] / 7155
-		Up_high_ratio = high_ratio - params[4]/params[3]
+		Up_pEW_ratio = pEW_ratio - pEW_Ni/pEW_Fe
 		#edge
 		vshift_Fe = [vshift_Fe]
 		vshift_Ni = [vshift_Ni]
 		FWHM_Fe = [FWHM_Fe]
 		FWHM_Ni = [FWHM_Ni]
 		flux_ratio = [flux_ratio]
-		high_ratio = [high_ratio]
+		pEW_ratio = [pEW_ratio]
 
 		if initialize:
 			edge_size = int(input('edge_size: '))
@@ -615,7 +661,17 @@ for n in range(list_size):
 			'''
 			if np.abs(f_ratio/flux_ratio[0]) < 2 and np.abs(f_ratio/flux_ratio[0]) > 0.1 and np.abs(h_ratio/high_ratio[0]) < 3 and np.abs(h_ratio/high_ratio[0]) > 0.1:
 			'''	
-			f_ratio = params[4] * params[5] / params[3] / params[0]
+			x_t = [x0, x1]
+			y_t = [y0, cut_ylist_f[pos[7] - pos[0]]]
+			def pEW_Fe_t(x):
+				return fG(x,7155*params[0],7155*params[1],params[3])/((y_t[0] - y_t[1]) / (x_t[0] - x_t[1]) * (x - x_t[0]) + y_t[0])
+
+			def pEW_Ni_t(x):
+				return fG(x,7378*params[5],7378*params[2],params[4])/((y_t[0] - y_t[1]) / (x_t[0] - x_t[1]) * (x - x_t[0]) + y_t[0])
+
+			pEW_Fe, err_pEW_Fe = itg.quad(pEW_Fe_t, x0, x1)
+			pEW_Ni, err_pEW_Ni = itg.quad(pEW_Ni_t, x0, x1)
+			f_ratio = params[4] * params[5] * 7378 / params[3] / params[0] / 7155
 			h_ratio = params[4] / params[3]
 			FWHM_Nit = params[5] * 2 * 300000 * np.sqrt(2*np.log(2))
 			if f_ratio < 2 and f_ratio > 0.01 and h_ratio < 5 and FWHM_Nit < 12500:
@@ -624,23 +680,23 @@ for n in range(list_size):
 				vshift_Fe.append((params[1] - 1) * 300000) 
 				vshift_Ni.append((params[2] - 1) * 300000)
 				flux_ratio.append(params[4] * params[5] *7378 / params[3] / params[0] / 7155)
-				high_ratio.append(params[4]/params[3])
+				pEW_ratio.append(pEW_Ni/pEW_Fe)
 				k += 1
 		Ue_FWHM_Fe = np.std(FWHM_Fe, ddof = 1)
 		Ue_vshift_Fe = np.std(vshift_Fe, ddof = 1)
 		Ue_FWHM_Ni = np.std(FWHM_Ni, ddof = 1)
 		Ue_vshift_Ni = np.std(vshift_Ni, ddof = 1)
 		Ue_flux_ratio = np.std(flux_ratio, ddof = 1)
-		Ue_high_ratio = np.std(high_ratio, ddof = 1)
+		Ue_pEW_ratio = np.std(pEW_ratio, ddof = 1)
 
 		U_FWHM_Fe = np.sqrt(Up_FWHM_Fe**2 + Ue_FWHM_Fe**2)
 		U_vshift_Fe = np.sqrt(Up_vshift_Fe**2 + Ue_vshift_Fe**2)
 		U_FWHM_Ni = np.sqrt(Up_FWHM_Ni**2 + Ue_FWHM_Ni**2)
 		U_vshift_Ni = np.sqrt(Up_vshift_Ni**2 + Ue_vshift_Ni**2)
 		U_flux_ratio = np.sqrt(Up_flux_ratio**2 + Ue_flux_ratio**2)
-		U_high_ratio = np.sqrt(Up_high_ratio**2 + Ue_high_ratio**2)
-		print('Up_FWHM_Fe: %s, Up_vshift_Fe: %s, Up_FWHM_Ni: %s, Up_vshift_Ni: %s, Up_flux_ratio: %s, Up_high_ratio: %s' %(Up_FWHM_Fe, Up_vshift_Fe, Up_FWHM_Ni, Up_vshift_Ni, Up_flux_ratio, Up_high_ratio))
-		print('U_FWHM_Fe: %s, U_vshift_Fe: %s, U_FWHM_Ni: %s, U_vshift_Ni: %s, U_flux_ratio: %s, U_high_ratio: %s' %(U_FWHM_Fe, U_vshift_Fe, U_FWHM_Ni, U_vshift_Ni, U_flux_ratio, U_high_ratio))
+		U_pEW_ratio = np.sqrt(Up_pEW_ratio**2 + Ue_pEW_ratio**2)
+		print('Up_FWHM_Fe: %s, Up_vshift_Fe: %s, Up_FWHM_Ni: %s, Up_vshift_Ni: %s, Up_flux_ratio: %s, Up_pEW_ratio: %s' %(Up_FWHM_Fe, Up_vshift_Fe, Up_FWHM_Ni, Up_vshift_Ni, Up_flux_ratio, Up_pEW_ratio))
+		print('U_FWHM_Fe: %s, U_vshift_Fe: %s, U_FWHM_Ni: %s, U_vshift_Ni: %s, U_flux_ratio: %s, U_pEW_ratio: %s' %(U_FWHM_Fe, U_vshift_Fe, U_FWHM_Ni, U_vshift_Ni, U_flux_ratio, U_pEW_ratio))
 		with open('Uncertenty'+save_as,'a') as f:
-			f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(target_name, phase, U_vshift_Fe, U_vshift_Ni, U_FWHM_Fe, U_FWHM_Ni, U_flux_ratio, Min1, Max1, Min2, Max2, Min3, Max3, Min4, Max4, width, edge_size))
+			f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(target_name, phase, U_vshift_Fe, U_vshift_Ni, U_FWHM_Fe, U_FWHM_Ni, U_pEW_ratio, Min1, Max1, Min2, Max2, Min3, Max3, Min4, Max4, width, edge_size))
 		g = 0
