@@ -610,11 +610,12 @@ plt.gca().add_artist(l1)
 plt.show()
 
 vNebular1 = (np.array(vNi1)+np.array(vFe1))/2
-UvNebular1 = np.sqrt(np.array(UvNi1)**2+np.array(UvFe1)**2)/2
+#UvNebular1 = np.sqrt(np.array(UvNi1)**2+np.array(UvFe1)**2)/2
+UvNebular1 = np.abs(np.array(vNi1) - np.array(vFe1))/2
 np.random.seed(399991)
 plt.tick_params(labelsize=12)
 plt.xlabel('Phase [Days Since Peak Brightness]',fontsize=12)
-plt.ylabel('Nebular Velocity[km s$^{-1}$]',fontsize=12)
+plt.ylabel('Nebular Velocity [km s$^{-1}$]',fontsize=12)
 plt.plot(np.linspace(150,450,100),np.zeros(100),linestyle='--',c = 'black')
 line = []
 head = 0
@@ -742,7 +743,7 @@ plt.plot([0.0164,0.022],[0.048,0.0524],c='black')
 plt.legend(fontsize=25)
 plt.show()
 
-exit()
+
 '''
 jlist=[]
 head = 0
@@ -819,9 +820,7 @@ r_vN = []
 Ur_vN = []
 r_subc = []
 for i in range(np.size(jlist)):
-	vN_t = (vFe1[jlist[i]]+vNi1[jlist[i]])/2
-	UvN_t = np.sqrt(UvFe1[jlist[i]]**2 + UvNi1[jlist[i]]**2)/2
-	if abs(vN_t)<abs(UvN_t) and ratio1[jlist[i]] < 0.13:
+	if abs(vNebular1[jlist[i]])<abs(UvNebular1[jlist[i]]) and ratio1[jlist[i]] < 0.13:
 		print(name1[jlist[i]])
 		g_vSi.append(vSi1[jlist[i]])
 		Ug_vSi.append(UvSi1[jlist[i]])
@@ -829,28 +828,28 @@ for i in range(np.size(jlist)):
 		Ug_ratio.append(U_ratio1[jlist[i]])
 		g_delta.append(delta1[jlist[i]])
 		Ug_delta.append(Udelta1[jlist[i]])
-		g_vN.append((vFe1[jlist[i]]+vNi1[jlist[i]])/2)
-		Ug_vN.append(np.sqrt(UvFe1[jlist[i]]**2+UvNi1[jlist[i]]**2)/2)
+		g_vN.append(vNebular1[jlist[i]])
+		Ug_vN.append(UvNebular1[jlist[i]])
 		g_subc.append(subc[jlist[i]])
-	elif vN_t < 0 and ratio1[jlist[i]] < 0.13:
+	elif vNebular1[jlist[i]] < 0 and ratio1[jlist[i]] < 0.13:
 		b_vSi.append(vSi1[jlist[i]])
 		Ub_vSi.append(UvSi1[jlist[i]])
 		b_ratio.append(ratio1[jlist[i]])
 		Ub_ratio.append(U_ratio1[jlist[i]])
 		b_delta.append(delta1[jlist[i]])
 		Ub_delta.append(Udelta1[jlist[i]])
-		b_vN.append((vFe1[jlist[i]]+vNi1[jlist[i]])/2)
-		Ub_vN.append(np.sqrt(UvFe1[jlist[i]]**2+UvNi1[jlist[i]]**2)/2)
+		b_vN.append(vNebular1[jlist[i]])
+		Ub_vN.append(UvNebular1[jlist[i]])
 		b_subc.append(subc[jlist[i]])
-	elif vN_t > 0 and ratio1[jlist[i]] < 0.13:
+	elif vNebular1[jlist[i]] > 0 and ratio1[jlist[i]] < 0.13:
 		r_vSi.append(vSi1[jlist[i]])
 		Ur_vSi.append(UvSi1[jlist[i]])
 		r_ratio.append(ratio1[jlist[i]])
 		Ur_ratio.append(U_ratio1[jlist[i]])
 		r_delta.append(delta1[jlist[i]])
 		Ur_delta.append(Udelta1[jlist[i]])
-		r_vN.append((vFe1[jlist[i]]+vNi1[jlist[i]])/2)
-		Ur_vN.append(np.sqrt(UvFe1[jlist[i]]**2+UvNi1[jlist[i]]**2)/2)
+		r_vN.append(vNebular1[jlist[i]])
+		Ur_vN.append(UvNebular1[jlist[i]])
 		r_subc.append(subc[jlist[i]])
 		if vSi1[jlist[i]] < 12:
 			print(name1[jlist[i]], vSi1[jlist[i]], (vFe1[jlist[i]]+vNi1[jlist[i]])/2)
@@ -1005,7 +1004,7 @@ plt.show()
 '''
 plt.tick_params(labelsize=20)
 plt.xlabel('Nebular Velocity [$\\rm \\ km\\ s^{-1}$]',fontsize=20)
-plt.ylabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]',fontsize=20)
+plt.ylabel('$\\rm {\\Delta}m_{15}(B)$ [mag]',fontsize=20)
 for i in range(np.size(g_vSi)):
 	if i == 0:
 		plt.scatter(g_vN[i],g_delta[i], c = 'gray', marker = 'o', label = 'Zero')
@@ -1020,7 +1019,7 @@ for i in range(np.size(r_vSi)):
 	plt.errorbar(r_vN[i],r_delta[i],xerr = Ur_vN[i],yerr = Ur_delta[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 plt.legend(fontsize=15)
 plt.show()
-exit()
+
 
 delta_tau = np.array(Append(r_delta,b_delta))
 delta_tau = np.array(Append(delta_tau,g_delta))
@@ -1038,13 +1037,13 @@ delta_tau = np.delete(delta_tau, delete_pos)
 Udelta_tau = np.delete(Udelta_tau, delete_pos)
 ratio_tau = np.delete(ratio_tau, delete_pos)
 Uratio_tau = np.delete(Uratio_tau, delete_pos)
-'''
+
 pearson_r_15, pearson_p_15 = pearson_err(delta_tau,ratio_tau, Udelta_tau, Uratio_tau)
 print(pearson_r_15, pearson_p_15)
 print(stats.pearsonr(delta_tau, ratio_tau))
 plt.scatter(delta_tau, ratio_tau)
 plt.show()
-
+'''
 tau_result_15, p_result_15 = kendalltau_err(delta_tau,ratio_tau, Udelta_tau, Uratio_tau)
 print(tau_result_15)
 print(p_result_15)
@@ -1055,7 +1054,7 @@ fig, ax = plt.subplots(figsize=(8,6))
 ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*double_sub, np.ones(2)*double_sup, alpha=0.5, color = 'gray')
 ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*ratio_n3, np.ones(2)*ratio_n20, alpha=0.5, color = 'yellow')
 plt.tick_params(labelsize=20)
-plt.xlabel('$\\rm {\\Delta}m_{15}(B)$ [magnitude]',fontsize=20)
+plt.xlabel('$\\rm {\\Delta}m_{15}(B)$ [mag]',fontsize=20)
 plt.ylabel('$\\rm M_{Ni}/M_{Fe}, t \\rightarrow \\infty$',fontsize=20)
 for i in range(np.size(g_vSi)):
 	if i == 0:
@@ -1071,8 +1070,8 @@ for i in range(np.size(r_vSi)):
 	plt.errorbar(r_delta[i],r_ratio[i],xerr = Ur_delta[i],yerr = Ur_ratio[i], c = 'r', capsize = 3, linestyle = '-', marker = 'o')
 ax.text(1.5,0.015,'sub-M$_{Ch}$ Double Det.',fontsize=15)
 ax.text(1.5,0.07,'M$_{Ch}$ Del. Det.',fontsize=15)
-ax.text(1.75,0.04,'86G', c='b',fontsize=15)
-ax.text(1.96,0.0325,'03gs',c='r',fontsize=15)
+ax.text(1.75,0.04,'86G', c='gray',fontsize=15)
+ax.text(1.96,0.0325,'03gs',c='red',fontsize=15)
 ax.text(0.75,0.01,'99aa',c='gray',fontsize=15)
 plt.legend(fontsize=20)
 plt.show()

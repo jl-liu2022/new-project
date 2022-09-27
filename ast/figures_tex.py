@@ -36,9 +36,9 @@ list_size = np.size(NameList)
 with open('FigureName.txt','w') as f:
 	for i in range(list_size):
 		if i%4 == 0:
-			f.writelines('\\gridline{\\fig{'+NameList[i]+'_'+PhaseList[i]+'.pdf}{0.25\\textwidth}{}\n')
+			f.writelines('\\gridline{\\fig{'+NameList[i]+'_'+PhaseList[i]+'.pdf}{0.235\\textwidth}{}\n')
 		else:
-			f.writelines('           \\fig{'+NameList[i]+'_'+PhaseList[i]+'.pdf}{0.25\\textwidth}{}\n')
+			f.writelines('           \\fig{'+NameList[i]+'_'+PhaseList[i]+'.pdf}{0.235\\textwidth}{}\n')
 		if i%4 == 3:
 			f.writelines('          }\n')
 

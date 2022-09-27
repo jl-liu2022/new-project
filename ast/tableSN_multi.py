@@ -88,8 +88,10 @@ for i in range(number):
 	U_ratio_t = np.sqrt(u1**2 + u2**2)*ratio[i]
 	U_ratio.append(U_ratio_t)
 
-Neb_v = (np.array(vFe)+np.array(vNi))/2
-U_Neb_v = np.sqrt(np.array(UvFe)**2+np.array(UvNi)**2)/2
+Neb_v = (np.array(vNi)+np.array(vFe))/2
+U_Neb_v = np.sqrt(np.array(UvNi)**2+np.array(UvFe)**2)/2
+U_Neb_v = np.abs(np.array(vNi) - np.array(vFe))/2
+
 with open('table'+save_as+'.dat','w') as fw:
 	for i in range(number):
 		fw.writelines('%s & +%d & %d$\\pm$%d & %d$\\pm$%d & %d$\\pm$%d & %d$\\pm$%d & %.3f$\\pm$%.3f & %d$\\pm$%d & %.3f$\\pm$%.3f & %s \\\\ \n' %(name[i],phase[i],vFe[i],UvFe[i],vNi[i],UvNi[i],wFe[i],UwFe[i],wNi[i],UwNi[i],r_flux[i],U_r_flux[i],Neb_v[i],U_Neb_v[i],ratio[i],U_ratio[i],ref_spectra[i]))

@@ -1,67 +1,72 @@
-\gridline{\fig{SN1986G_256.pdf}{0.25\textwidth}{}
-           \fig{SN1990N_227.pdf}{0.25\textwidth}{}
-           \fig{SN1990N_280.pdf}{0.25\textwidth}{}
-           \fig{SN1990N_305.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN1986G_256.pdf}{0.235\textwidth}{}
+           \fig{SN1990N_227.pdf}{0.235\textwidth}{}
+           \fig{SN1990N_280.pdf}{0.235\textwidth}{}
+           \fig{SN1990N_305.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN1998bu_236.pdf}{0.25\textwidth}{}
-           \fig{SN1998bu_280.pdf}{0.25\textwidth}{}
-           \fig{SN1999aa_256.pdf}{0.25\textwidth}{}
-           \fig{SN2002bo_311.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN1998bu_236.pdf}{0.235\textwidth}{}
+           \fig{SN1998bu_280.pdf}{0.235\textwidth}{}
+           \fig{SN1999aa_256.pdf}{0.235\textwidth}{}
+           \fig{SN2002bo_311.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2002dj_275.pdf}{0.25\textwidth}{}
-           \fig{SN2003du_221.pdf}{0.25\textwidth}{}
-           \fig{SN2003gs_201.pdf}{0.25\textwidth}{}
-           \fig{SN2003hv_323.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2002dj_275.pdf}{0.235\textwidth}{}
+           \fig{SN2003du_221.pdf}{0.235\textwidth}{}
+           \fig{SN2003gs_201.pdf}{0.235\textwidth}{}
+           \fig{SN2003hv_323.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2003kf_397.pdf}{0.25\textwidth}{}
-           \fig{SN2004eo_228.pdf}{0.25\textwidth}{}
-           \fig{SN2005cf_319.pdf}{0.25\textwidth}{}
-           \fig{SN2006X_277.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2003kf_397.pdf}{0.235\textwidth}{}
+           \fig{SN2004eo_228.pdf}{0.235\textwidth}{}
+           \fig{SN2005cf_319.pdf}{0.235\textwidth}{}
+           \fig{SN2006X_277.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2006X_360.pdf}{0.25\textwidth}{}
-           \fig{SN2007af_301.pdf}{0.25\textwidth}{}
-           \fig{SN2007le_304.pdf}{0.25\textwidth}{}
-           \fig{SN2008Q_201.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2006X_360.pdf}{0.235\textwidth}{}
+           \fig{SN2007af_301.pdf}{0.235\textwidth}{}
+           \fig{SN2007le_304.pdf}{0.235\textwidth}{}
+           \fig{SN2008Q_201.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2011by_206.pdf}{0.25\textwidth}{}
-           \fig{SN2011by_310.pdf}{0.25\textwidth}{}
-           \fig{SN2011fe_205.pdf}{0.25\textwidth}{}
-           \fig{SN2011fe_226.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2011by_206.pdf}{0.235\textwidth}{}
+           \fig{SN2011by_310.pdf}{0.235\textwidth}{}
+           \fig{SN2011fe_205.pdf}{0.235\textwidth}{}
+           \fig{SN2011fe_226.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2011fe_311.pdf}{0.25\textwidth}{}
-           \fig{SN2011fe_347.pdf}{0.25\textwidth}{}
-           \fig{SN2011fe_380.pdf}{0.25\textwidth}{}
-           \fig{SN2012cg_279.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2011fe_311.pdf}{0.235\textwidth}{}
+           \fig{SN2011fe_347.pdf}{0.235\textwidth}{}
+           \fig{SN2011fe_380.pdf}{0.235\textwidth}{}
+           \fig{SN2012cg_279.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2012cg_339.pdf}{0.25\textwidth}{}
-           \fig{SN2012fr_222.pdf}{0.25\textwidth}{}
-           \fig{SN2012fr_261.pdf}{0.25\textwidth}{}
-           \fig{SN2012fr_340.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2012cg_339.pdf}{0.235\textwidth}{}
+           \fig{SN2012fr_222.pdf}{0.235\textwidth}{}
+           \fig{SN2012fr_261.pdf}{0.235\textwidth}{}
+           \fig{SN2012fr_340.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2012fr_367.pdf}{0.25\textwidth}{}
-           \fig{SN2012hr_283.pdf}{0.25\textwidth}{}
-           \fig{SN2013aa_399.pdf}{0.25\textwidth}{}
-           \fig{SN2013cs_261.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2012fr_367.pdf}{0.235\textwidth}{}
+           \fig{SN2012hr_283.pdf}{0.235\textwidth}{}
+           \fig{SN2013aa_399.pdf}{0.235\textwidth}{}
+           \fig{SN2013cs_261.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2013cs_303.pdf}{0.25\textwidth}{}
-           \fig{SN2013dy_333.pdf}{0.25\textwidth}{}
-           \fig{SN2013gy_276.pdf}{0.25\textwidth}{}
-           \fig{SN2014J_265.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2013cs_303.pdf}{0.235\textwidth}{}
+           \fig{SN2013dy_333.pdf}{0.235\textwidth}{}
+           \fig{SN2013gy_276.pdf}{0.235\textwidth}{}
+           \fig{SN2014J_231.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2014J_292.pdf}{0.25\textwidth}{}
-           \fig{SN2014J_351.pdf}{0.25\textwidth}{}
-           \fig{SN2015F_280.pdf}{0.25\textwidth}{}
-           \fig{SN2017cbv_317.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2014J_265.pdf}{0.235\textwidth}{}
+           \fig{SN2014J_269.pdf}{0.235\textwidth}{}
+           \fig{SN2014J_292.pdf}{0.235\textwidth}{}
+           \fig{SN2014J_351.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2017fgc_384.pdf}{0.25\textwidth}{}
-           \fig{SN2018oh_268.pdf}{0.25\textwidth}{}
-           \fig{SN2019ein_314.pdf}{0.25\textwidth}{}
-           \fig{SN2019np_303.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2015F_280.pdf}{0.235\textwidth}{}
+           \fig{SN2017cbv_317.pdf}{0.235\textwidth}{}
+           \fig{SN2017fgc_384.pdf}{0.235\textwidth}{}
+           \fig{SN2018oh_268.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{SN2019np_368.pdf}{0.25\textwidth}{}
-           \fig{SN2021hpr_263.pdf}{0.25\textwidth}{}
-           \fig{SN2021hpr_288.pdf}{0.25\textwidth}{}
-           \fig{ASASSN-14jg_221.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2019ein_314.pdf}{0.235\textwidth}{}
+           \fig{SN2019np_303.pdf}{0.235\textwidth}{}
+           \fig{SN2019np_368.pdf}{0.235\textwidth}{}
+           \fig{SN2021hpr_263.pdf}{0.235\textwidth}{}
           }
-\gridline{\fig{ASASSN-14jg_267.pdf}{0.25\textwidth}{}
-           \fig{ASASSN-14jg_323.pdf}{0.25\textwidth}{}
+\gridline{\fig{SN2021hpr_288.pdf}{0.235\textwidth}{}
+           \fig{SN2021wuf_208.pdf}{0.235\textwidth}{}
+           \fig{SN2021wuf_299.pdf}{0.235\textwidth}{}
+           \fig{ASASSN-14jg_221.pdf}{0.235\textwidth}{}
+          }
+\gridline{\fig{ASASSN-14jg_267.pdf}{0.235\textwidth}{}
+           \fig{ASASSN-14jg_323.pdf}{0.235\textwidth}{}
