@@ -89,8 +89,8 @@ for i in range(number):
 	U_ratio.append(U_ratio_t)
 
 Neb_v = (np.array(vNi)+np.array(vFe))/2
+# U_Neb_v = np.sqrt(np.array(UvNi)**2+np.array(UvFe)**2)/2
 U_Neb_v = np.sqrt(np.array(UvNi)**2+np.array(UvFe)**2)/2
-U_Neb_v = np.abs(np.array(vNi) - np.array(vFe))/2
 
 with open('table'+save_as+'.dat','w') as fw:
 	for i in range(number):

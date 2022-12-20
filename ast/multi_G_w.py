@@ -109,7 +109,6 @@ for n in range(list_size):
 		a = line.split()
 		vSi = float(a[1])
 		U_vSi = float(a[2])
-		upper_FWHM_Ni = 13000
 		print(resolution)
 		xlist = []
 		ylist = []
@@ -197,7 +196,7 @@ for n in range(list_size):
 	xlist = xlist / (1+redshift)
 	
 
-	
+	upper_FWHM_Ni = 11000
 
 	pos = [0,0,0,0,0,0,0,0]
 	sig =  7000/2/300000/(2*np.log(2))**(0.5)      
@@ -432,7 +431,9 @@ for n in range(list_size):
 		#plt.text(xlist[pos_t[0]], 1.05, "reduced $r^2 =$ %f"%chi2, fontsize=15)
 		plt.scatter(xlist[pos_t[0]], 1.05, alpha=0)
 		plt.legend(fontsize=15)
+		plt.savefig('figDirtemp/'+NameList[n]+'.pdf')
 		plt.show()
+
 		
 		'''
 		fig, ax = plt.subplots(figsize=(8,8.5))
@@ -455,7 +456,13 @@ for n in range(list_size):
 		plt.plot(cut_xlist[(pos[2] - pos[0]):(pos[3] - pos[0]+1)], np.ones(pos[3]-pos[2]+1)*-0.05, c = 'b')
 		plt.plot(cut_xlist[(pos[4] - pos[0]):(pos[5] - pos[0]+1)], np.ones(pos[5]-pos[4]+1)*-0.05, c = 'b')
 		plt.plot(cut_xlist[(pos[6] - pos[0]):(pos[7] - pos[0]+1)], np.ones(pos[7]-pos[6]+1)*-0.05, c = 'b')
+		plt.text(xlist[pos[0]]-30, ylist_t[pos[0]]+0.06 - y7[0], 'A\'', fontsize=25, c='r')
+		plt.scatter(xlist[pos[0]], ylist_t[pos[0]] - y7[0], s=100, c='r', zorder=2)
+		plt.text(xlist[pos[2]]-30, ylist_t[pos[2]]+0.06 - y7[pos[2]-pos[0]], 'A', fontsize=25, c='r')
+		plt.scatter(xlist[pos[2]], ylist_t[pos[2]] - y7[pos[2]-pos[0]], s=100, c='r', zorder=2)
+		#print(xlist[pos[2]]-30, ylist_t[pos[2]]+0.02 - y7[pos[2]-pos[0]], xlist[pos[2]], ylist_t[pos[2]] - y7[pos[2]-pos[0]])
 		plt.legend(fontsize=13)
+		plt.savefig('figDirtemp/'+NameList[n]+'_N.pdf')
 		plt.show()
 		'''
 		q = int(input('input 1 to continue, 2 to save and quit, 3 to quit:'))
@@ -463,7 +470,8 @@ for n in range(list_size):
 			if (Min2 - Max1) >= 10:
 				save_as = '_IMG.dat'
 			else:
-				save_as = '_pr.dat'
+				#save_as = '_pr.dat'
+				save_as = '_IMG.dat'
 			with open('result_data0'+save_as,'a') as f:
 				f.writelines('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n' %(todo_name, phase, delta15, U_delta15, redshift, E_B_V, vSi, U_vSi, ratio_ave_bef * 1.8, vshift_Fe, vshift_Ni, FWHM_Fe, FWHM_Ni, flux_ratio, pEW_ratio))
 				g = 1
@@ -545,7 +553,7 @@ for n in range(list_size):
 		Up_FWHM_Ni = FWHM_Ni - params[5] * 2 * 300000 * np.sqrt(2*np.log(2))
 		Up_vshift_Ni = vshift_Ni - (params[2] - 1) * 300000
 		Up_flux_ratio = flux_ratio - params[4] * params[5] * 7378 / params[3] / params[0] / 7155
-		Up_pEW_ratio = high_ratio - pEW_Ni/pEW_Fe
+		Up_pEW_ratio = pEW_ratio - pEW_Ni/pEW_Fe
 		#edge
 		vshift_Fe = [vshift_Fe]
 		vshift_Ni = [vshift_Ni]
