@@ -611,7 +611,7 @@ plt.show()
 
 vNebular1 = (np.array(vNi1)+np.array(vFe1))/2
 #UvNebular1 = np.sqrt(np.array(UvNi1)**2+np.array(UvFe1)**2)/2
-UvNebular1 = np.abs(np.array(vNi1) - np.array(vFe1))/2
+UvNebular1 = np.abs(np.array(vNi1) - np.array(vFe1))/2 + 200 + np.sqrt(np.array(UvNi1)**2+np.array(UvFe1)**2)/2
 np.random.seed(399991)
 plt.tick_params(labelsize=12)
 plt.xlabel('Phase [Days Since Peak Brightness]',fontsize=12)
@@ -895,7 +895,7 @@ def pearson_err(x,y,xerr,yerr):
 		r.append(r_t)
 		p.append(p_t)
 	return np.percentile(r, [16, 50, 84]), np.percentile(p, [16, 50, 84])
-'''
+#'''
 tau_result_b, p_result_b = kendalltau_err(b_vSi,b_ratio, Ub_vSi, Ub_ratio)
 print(tau_result_b)
 print(p_result_b)
@@ -916,7 +916,7 @@ print(pearson_p_blue)
 print(stats.pearsonr(r_vSi, r_ratio))
 print(pearson_r_red)
 print(pearson_p_red)
-'''
+#'''
 # definitions for the axes
 left, width = 0.1, 0.55
 bottom, height = 0.1, 0.55
@@ -1043,13 +1043,13 @@ print(pearson_r_15, pearson_p_15)
 print(stats.pearsonr(delta_tau, ratio_tau))
 plt.scatter(delta_tau, ratio_tau)
 plt.show()
-'''
+#'''
 tau_result_15, p_result_15 = kendalltau_err(delta_tau,ratio_tau, Udelta_tau, Uratio_tau)
 print(tau_result_15)
 print(p_result_15)
 tau, p_value = stats.kendalltau(delta_tau, ratio_tau)
 print('tau, p_value: ',tau, p_value)
-'''
+#'''
 fig, ax = plt.subplots(figsize=(8,6))
 ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*double_sub, np.ones(2)*double_sup, alpha=0.5, color = 'gray')
 ax.fill_between(np.linspace(0.8,2.0,2), np.ones(2)*ratio_n3, np.ones(2)*ratio_n20, alpha=0.5, color = 'yellow')
